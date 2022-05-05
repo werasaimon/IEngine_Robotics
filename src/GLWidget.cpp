@@ -79,6 +79,8 @@ GLWidget::GLWidget(QWidget *parent)
 
 GLWidget::~GLWidget()
 {
+	
+    if(mScene) delete mScene;
     // Make sure the context is current when deleting the texture
     // and the buffers.
     makeCurrent();
