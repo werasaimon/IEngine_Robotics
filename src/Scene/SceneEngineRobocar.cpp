@@ -402,7 +402,7 @@ void SceneEngineRobocar::update()
             m_EndPoint = mPoints[num];
         }
 
-        mRoboCar->Update(mTimeStep);
+        mRoboCar->Update(mTimeStep,m_PointS);
         mRoboCar->UpdateControlPointGuidance(m_PointS);
     }
 

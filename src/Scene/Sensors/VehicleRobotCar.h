@@ -70,8 +70,10 @@ struct DispatcherAttribute
 
     float coffEncoders = 0.05f;
 
-    float exterm_MIN_MAX = 600;
+    float extrem_MIN_MAX = 600;
     float minimal = 1.0;
+
+    bool isCorrectlyDynamics = false;
 
 };
 
@@ -155,7 +157,7 @@ public:
 
 
     void UpdateControlPointGuidance( const Vector3& target_position );
-    void Update(scalar _dt);
+    void Update(scalar _dt, const Vector3 &target_position);
     void AddTransform(const Transform& t);
 
 

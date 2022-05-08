@@ -81,6 +81,12 @@ void VehicleRobotCar::UpdateControlPointGuidance(const Vector3 &target_position)
 {
     Vector3 p = physBody_Base->GetTransform().GetPosition();
     Vector3 direction = (p - target_position);
+
+//    if(IMath::IAbs(IMath::Cross(p,target_position).LengthSquare()) < 0.0001 )
+//    {
+//        direction = Vector3::X;
+//    }
+
     Vector3 eye_dir = physBody_Base->GetTransform().GetRotation() * Vector3::X;
     Vector3 vel = physBody_Base->GetLinearVelocity();
 
@@ -88,7 +94,7 @@ void VehicleRobotCar::UpdateControlPointGuidance(const Vector3 &target_position)
     scalar V = vel.Dot(eye_dir);
 
 
-    const static float MIN_MAX = mDispatcherAttribute.exterm_MIN_MAX;
+    const static float MIN_MAX = mDispatcherAttribute.extrem_MIN_MAX;
     L = IMath::IClamp(L,-MIN_MAX,MIN_MAX);
 
     float coff0 = mDispatcherAttribute.coffPosDeverative0;
@@ -99,17 +105,25 @@ void VehicleRobotCar::UpdateControlPointGuidance(const Vector3 &target_position)
     mVehicleRobot->setPos_motorC((L * coff1 + V * coff2) * coff0);
     mVehicleRobot->setPos_motorD((L * coff1 + V * coff2) * coff0);
 
-    if(direction.Length() > mDispatcherAttribute.minimal)
+    if(direction.Length() > mDispatcherAttribute.minimal )
     {
         Vector3 dir = (target_position - p).Normalized();
+
+
+
         mFixOrientation = (Quaternion::SlerpToVector(Vector3::X ,dir).GetConjugate());
+        if(IMath::IAbs(IMath::Cross(Vector3::X ,dir).LengthSquare()) < 0.0001 )
+        {
+          mFixOrientation = Quaternion::IDENTITY;
+        }
+
 
         //        mRigidBodyVehicle->ApplyImpulseLinear( mOrientationSensor->Quaternione() * Vector3::X * -0.025f *
         //                                               Vector3::Clamp(direction,1.0));
     }
 }
 
-void VehicleRobotCar::Update(scalar _dt)
+void VehicleRobotCar::Update(scalar _dt , const Vector3 &target_position)
 {
     if(mVehicleRobot)
     {
@@ -150,15 +164,22 @@ void VehicleRobotCar::Update(scalar _dt)
         mDebugAnalisys.AngleYaw_Derivative = (OrientationSensor->Quaternione() * velocity_angle).y * mDispatcherAttribute.coffRotDev;
         //------------------------------------------------------------------//
 
+        Vector3 p = physBody_Base->GetTransform().GetPosition();
+        Vector3 direction = (p - target_position);
 
-        float yaw = euler.y *  mDispatcherAttribute.coffRotDev +
-                (OrientationSensor->Quaternione() * velocity_angle).y * mDispatcherAttribute.coffRotDev;
+        if(direction.Length() > mDispatcherAttribute.minimal )
+        {
+            float yaw = euler.y *  mDispatcherAttribute.coffRotDev +
+                    (OrientationSensor->Quaternione() * velocity_angle).y * mDispatcherAttribute.coffRotDev;
 
-        float coff = mDispatcherAttribute.coffRotLen;
-        dirivative_a += -yaw * coff;
-        dirivative_b += -yaw * coff;
-        dirivative_c += +yaw * coff;
-        dirivative_d += +yaw * coff;
+            float coff = mDispatcherAttribute.coffRotLen;
+            dirivative_a += -yaw * coff;
+            dirivative_b += -yaw * coff;
+            dirivative_c += +yaw * coff;
+            dirivative_d += +yaw * coff;
+        }
+
+
 
         //--------------------------------------------//
 
@@ -176,13 +197,19 @@ void VehicleRobotCar::Update(scalar _dt)
         //------------------------------------------------------------------//
 
 
-        //--------------------------------------------//
 
-        const static float MIN_MAX = 180.f * 2.f;
-        float ya = IMath::IClamp(euler.y , -MIN_MAX , MIN_MAX);
-        float yaw2 = ya * 0.08 + (OrientationSensor->Quaternione() * velocity_angle).y * 0.03f;
-        physBody_Base->ApplyImpulseAngular( Vector3::Y * yaw2 * -10.25f *
-                                            physBody_Base->GetInertiaTensorWorld());
+
+        //------------------------------------------------------------------//
+
+        if(mDispatcherAttribute.isCorrectlyDynamics == true)
+        {
+            const static float MIN_MAX = 180.f * 2.f;
+            float ya = IMath::IClamp(euler.y , -MIN_MAX , MIN_MAX);
+            float yaw2 = ya * 0.08 + (OrientationSensor->Quaternione() * velocity_angle).y * 0.03f;
+            physBody_Base->ApplyImpulseAngular( Vector3::Y * yaw2 * -10.25f *
+                                                physBody_Base->GetInertiaTensorWorld());
+        }
+        //------------------------------------------------------------------//
     }
 }
 

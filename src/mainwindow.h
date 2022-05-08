@@ -49,6 +49,16 @@ private slots:
 
     void on_horizontalSlider_speedPoint_sliderMoved(int position);
 
+    void on_spinBox_extrem_MIN_MAX_valueChanged(int arg1);
+
+    void on_spinBox_extrem_MIN_MAX_editingFinished();
+
+    void on_spinBox_Minimal_editingFinished();
+
+    void on_checkBox_isCorrectDynamic_toggled(bool checked);
+
+    void on_pushButton_Clear_clicked();
+
 private:
 
     // Порт обмена данными

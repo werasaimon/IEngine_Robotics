@@ -55,24 +55,24 @@ void MainWindow::Update()
 {
 
     const scalar AngleYaw =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.AngleYaw * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.AngleYaw * 180.0/M_PI;
 
     const scalar AngleYaw_Derivative =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.AngleYaw_Derivative * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.AngleYaw_Derivative * 180.0/M_PI;
 
 
 
     const scalar dirivative_motor_a =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_a * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_a * 10;
 
     const scalar dirivative_motor_b =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_b * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_b * 10;
 
     const scalar dirivative_motor_c =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_c * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_c * 10;
 
     const scalar dirivative_motor_d =
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_d * 20;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_d * 10;
 
     if(Numer > MAX - 10)
     {
@@ -100,7 +100,7 @@ void MainWindow::Update()
     if(ui->checkBox_motor_C->isChecked()) PushData("motor_C",dirivative_motor_c,4);
     if(ui->checkBox_motor_D->isChecked()) PushData("motor_D",dirivative_motor_d,5);
 
-   // ui->widget_Plot->replot();
+    ui->widget_Plot->replot();
 
     /**
     const Vector3 eulerAngle =
@@ -211,13 +211,13 @@ void MainWindow::on_horizontalSlider_RotLen_sliderMoved(int position)
 void MainWindow::PushData(QString _str, double _data , int _n_graph)
 {
 
-   ui->widget_Plot->graph(_n_graph)->addData(Numer, _data);
+   //ui->widget_Plot->graph(_n_graph)->addData(Numer, _data);
 
 
 
-//    Graph_Data_X[_str].append(Numer);
-//    Graph_Data_Y[_str].append(_data);
-//    ui->widget_Plot->graph(_n_graph)->setData(Graph_Data_X[_str], Graph_Data_Y[_str]);
+    Graph_Data_X[_str].append(Numer);
+    Graph_Data_Y[_str].append(_data);
+    ui->widget_Plot->graph(_n_graph)->setData(Graph_Data_X[_str], Graph_Data_Y[_str]);
 }
 
 void MainWindow::PushData2(QString _str, float _data, int _n_graph)
@@ -227,10 +227,10 @@ void MainWindow::PushData2(QString _str, float _data, int _n_graph)
 
 void MainWindow::ClearData(QString _str, int _n_graph)
 {
-//    Graph_Data_X[_str].clear();
-//    Graph_Data_Y[_str].clear();
+    Graph_Data_X[_str].clear();
+    Graph_Data_Y[_str].clear();
 
-    ui->widget_Plot->graph(_n_graph)->data().clear();
+   // ui->widget_Plot->graph(_n_graph)->data().clear();
 }
 
 
@@ -244,5 +244,47 @@ void MainWindow::on_pushButton_LQR_clicked()
 void MainWindow::on_horizontalSlider_speedPoint_sliderMoved(int position)
 {
   static_cast<SceneEngineRobocar*>(ui->widget->scene())->speed_point = position;
+}
+
+
+void MainWindow::on_spinBox_extrem_MIN_MAX_valueChanged(int arg1)
+{
+    //static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.extrem_MIN_MAX = arg1;
+}
+
+
+void MainWindow::on_spinBox_extrem_MIN_MAX_editingFinished()
+{
+   int arg = ui->spinBox_extrem_MIN_MAX->text().toInt();
+   static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.extrem_MIN_MAX = arg;
+   qDebug() << arg;
+}
+
+
+void MainWindow::on_spinBox_Minimal_editingFinished()
+{
+    int arg = ui->spinBox_Minimal->text().toInt();
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.minimal = arg;
+    qDebug() << arg;
+}
+
+
+void MainWindow::on_checkBox_isCorrectDynamic_toggled(bool checked)
+{
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.isCorrectlyDynamics = checked;
+}
+
+
+void MainWindow::on_pushButton_Clear_clicked()
+{
+    /*if(ui->checkBox_AngleYaw->isChecked()) */ ClearData("AngleYaw",0);
+    /*if(ui->checkBox_AngleYaw_Derivative->isChecked())*/  ClearData("AngleYaw_Derivative",1);
+
+    /*if(ui->checkBox_motor_A->isChecked())*/ ClearData("motor_A",2);
+    /*if(ui->checkBox_motor_B->isChecked())*/ ClearData("motor_B",3);
+    /*if(ui->checkBox_motor_C->isChecked())*/ ClearData("motor_C",4);
+    /*if(ui->checkBox_motor_D->isChecked())*/ ClearData("motor_D",5);
+
+    Numer=0;
 }
 
