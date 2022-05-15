@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include <QArrayData>
 #include <QTextEdit>
 
 

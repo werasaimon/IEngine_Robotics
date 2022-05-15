@@ -8,7 +8,7 @@ const Vector2 &SceneEngineNuzzleGimbal::getAngleGimbal() const
     return AngleGimbal;
 }
 
-EngineGimbalStabilization *SceneEngineNuzzleGimbal::gimbalStabilization() const
+IEngineGimbalStabilization *SceneEngineNuzzleGimbal::gimbalStabilization() const
 {
     return mGimbalStabilization;
 }
@@ -93,7 +93,7 @@ void SceneEngineNuzzleGimbal::initialization()
     mGizmoManipulator->Resize(mWidth,mHeight);
     mGizmoManipulator->DisplayScale(2.0);
 
-    mGimbalStabilization = new EngineGimbalStabilization();
+    mGimbalStabilization = new IEngineGimbalStabilization();
     mComponents.push_back(mGimbalStabilization->mGimbalRoot);
     mComponents.push_back(mGimbalStabilization->mGimbalConnectA);
     mComponents.push_back(mGimbalStabilization->mGimbalConnectB);

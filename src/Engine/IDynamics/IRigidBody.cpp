@@ -327,6 +327,8 @@ void IRigidBody::RecomputeMassInformation()
     // Update the linear velocity of the center of mass
    // mLinearVelocity += mAngularVelocity.Cross(mCenterOfMassWorld - oldCenterOfMass);
 
+    mCenterOfMassWorld = mTransform.GetPosition();
+
 }
 
 

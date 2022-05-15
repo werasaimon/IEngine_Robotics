@@ -42,12 +42,19 @@
 #include "Sensors/OrientationSensor.h"
 #include "Sensors/VehicleRobotCar.h"
 
+#include "IEngineGimbalStabilization.h"
+
 using namespace IMath;
 using namespace IEngine;
 
 
 
 
+
+//-----------------------------------------//
+
+
+//-----------------------------------------//
 
 struct SceneDscriptorr
 {
@@ -106,10 +113,28 @@ class SceneEngineRobocar : public SceneMain
 
     //----------------------------//
 
+
+    IEngineGimbalStabilization *mGimbalStabilization;
+
+    ////---------------------////
+
+    IComponentMesh *NuzzleChoice;
+
+
+    //----------------------------//
+
+    //---------------- Manipulator -------------------//
+    std::auto_ptr<IGizmoManipulator> mGizmoManipulator;
+    std::set<int>                    mSelectedIndexIds;
+
+    bool isSelectedStatus;
+
+    //----------------------------//
+
 public:
 
 
-    SceneDscriptorr mSceneDscriptor;
+    SceneDscriptorr  mSceneDscriptor;
     VehicleRobotCar *mRoboCar;
 
 

@@ -213,8 +213,6 @@ void MainWindow::PushData(QString _str, double _data , int _n_graph)
 
    //ui->widget_Plot->graph(_n_graph)->addData(Numer, _data);
 
-
-
     Graph_Data_X[_str].append(Numer);
     Graph_Data_Y[_str].append(_data);
     ui->widget_Plot->graph(_n_graph)->setData(Graph_Data_X[_str], Graph_Data_Y[_str]);

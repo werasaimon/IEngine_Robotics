@@ -98,7 +98,7 @@ public:
     DebugAnalysis mDebugAnalisys;
 
 
-private:
+//private:
 
     RobotSensors* mVehicleRobot;
 

@@ -131,6 +131,7 @@ SOURCES += \
     EngineComponent/IComponentMesh.cpp \
     EngineComponent/IMaterial.cpp \
     GLWidget.cpp \
+    Scene/IEngineGimbalStabilization.cpp \
     Scene/SceneEngineNozzle.cpp \
     Scene/SceneEngineNuzzleGimbal.cpp \
     Scene/SceneEngineRobocar.cpp \
@@ -275,6 +276,7 @@ HEADERS += \
     EngineComponent/IEngineComponent.hpp \
     EngineComponent/IMaterial.h \
     GLWidget.h \
+    Scene/IEngineGimbalStabilization.h \
     Scene/SceneEngineNozzle.h \
     Scene/SceneEngineNuzzleGimbal.h \
     Scene/SceneEngineRobocar.h \

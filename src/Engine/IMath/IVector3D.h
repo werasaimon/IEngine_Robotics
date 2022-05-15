@@ -143,7 +143,7 @@ public:
 
 
 
-    SIMD_INLINE explicit IVector3D(const T& scalar)
+    SIMD_INLINE IVector3D(const T& scalar)
         : x ( scalar ) ,
           y ( scalar ) ,
           z ( scalar )
