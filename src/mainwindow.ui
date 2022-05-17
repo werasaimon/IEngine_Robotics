@@ -51,7 +51,7 @@
              <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="pushButton_LQR">
                <property name="text">
-                <string>start-control</string>
+                <string>tracking</string>
                </property>
               </widget>
              </item>
@@ -369,6 +369,33 @@
            <widget class="QCheckBox" name="checkBox_motor_D">
             <property name="text">
              <string>motor_D</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_10">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_AngleGimbal_X">
+            <property name="text">
+             <string>Gimbal rotate X</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_AngleGimbal_Y">
+            <property name="text">
+             <string>Gimbal rotate Y</string>
             </property>
             <property name="checked">
              <bool>true</bool>

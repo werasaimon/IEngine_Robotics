@@ -49,9 +49,26 @@ using namespace IEngine;
 
 
 
-
+class SceneEngineRobocar;
 
 //-----------------------------------------//
+
+
+
+class FactoryMethod
+{
+
+        FactoryMethod( SceneEngineRobocar *_scene) :
+        mScene(_scene)
+        {
+
+        }
+
+
+
+
+        SceneEngineRobocar *mScene;
+};
 
 
 //-----------------------------------------//
@@ -131,7 +148,10 @@ class SceneEngineRobocar : public SceneMain
 
     //----------------------------//
 
+
 public:
+
+    Vector3 m_AngleGimbal;
 
 
     SceneDscriptorr  mSceneDscriptor;

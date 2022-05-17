@@ -296,26 +296,26 @@ void SceneEngineRobocar::initialization()
             mComponents.push_back(mGimbalStabilization->mGimbalConnectC);
 
 
-            Transform transform_s = transform_t;
-           // transform_s.SetPosition(Vector3::Y * -20.f);
-            IRigidBody *physBody_s = mDynamicsWorld->CreateRigidBody(transform_s);
-            IProxyShape* proxy_s = physBody_s->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),10.f);
-            AddPhysicsProxyInModel(mGimbalStabilization->mGimbalRoot,proxy_s);
-            physBody_s->SetType(BodyType::DYNAMIC);
+//            Transform transform_s = transform_t;
+//           // transform_s.SetPosition(Vector3::Y * -20.f);
+//            IRigidBody *physBody_s = mDynamicsWorld->CreateRigidBody(transform_s);
+//            IProxyShape* proxy_s = physBody_s->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),10.f);
+//            AddPhysicsProxyInModel(mGimbalStabilization->mGimbalRoot,proxy_s);
+//            physBody_s->SetType(BodyType::DYNAMIC);
 
 
-//            trans = Transform::Identity();
-//            trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 4.5f);
-//            IProxyShape* proxy_sphere_t = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f,trans);
-//            AddPhysicsProxyInModel(BoxDown_t,proxy_sphere_t);
+            trans = Transform::Identity();
+            trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 4.5f);
+            IProxyShape* proxy_sphere_t = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f,trans);
+            AddPhysicsProxyInModel(BoxDown,proxy_sphere_t);
 
             physBody_Target_4->SetType(BodyType::DYNAMIC);
             //physBody_Target_4->SetCenterOfMassWorld( trans.GetPosition() + Vector3::Y );
 
 
 
-            IFixedJointInfo FixedJointInfo(physBody_s,physBody_Target_4,physBody_s->CenterOfMassWorld() - Vector3::Y * -3.f);
-            IFixedJoint* FixedJoint0 = static_cast<IFixedJoint*>(mDynamicsWorld->CreateJoint(FixedJointInfo));
+//            IFixedJointInfo FixedJointInfo(physBody_s,physBody_Target_4,physBody_s->CenterOfMassWorld() - Vector3::Y * -3.f);
+//            IFixedJoint* FixedJoint0 = static_cast<IFixedJoint*>(mDynamicsWorld->CreateJoint(FixedJointInfo));
 
 
 
@@ -659,9 +659,10 @@ void SceneEngineRobocar::update()
     }
 
 
-    if(mRoboCar && m_IsDynamic_LQR)
+    if(mRoboCar)
     {
-
+      if(m_IsDynamic_LQR)
+      {
         m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
         if((m_EndPoint - m_PointS).LengthSquare() < 40.2 )
         {
@@ -672,6 +673,12 @@ void SceneEngineRobocar::update()
 
         mRoboCar->Update(mTimeStep,m_PointS);
         mRoboCar->UpdateControlPointGuidance(m_PointS);
+
+      }
+      else
+      {
+        mRoboCar->Stop();
+      }
     }
 
 
@@ -685,7 +692,10 @@ void SceneEngineRobocar::update()
 
     mGimbalStabilization->Update(mGimbalStabilization->mGimbalRoot->GetTransfom().GetRotation(),
                                  NuzzleChoice->GetTransformHierarchy().GetPosition(),
-                                 mGimbalStabilization->mGimbalConnectB->GetTransformHierarchy().GetPosition());;
+                                 mGimbalStabilization->mGimbalConnectB->GetTransformHierarchy().GetPosition());
+
+
+     m_AngleGimbal = mGimbalStabilization->mAngleGimbalStabilization;
 
     //--------------------------------------------------------------//
 }

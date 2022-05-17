@@ -13,10 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("IEngine - Werasaimon");
 
-    timer         = new QTimer(this);
+    timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(Update()));
 
-    for(int i=0; i<6; ++i)
+    for(int i=0; i<6 + 3; ++i)
     {
          ui->widget_Plot->addGraph();
          QPen pen1;
@@ -74,6 +74,17 @@ void MainWindow::Update()
     const scalar dirivative_motor_d =
     static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDebugAnalisys.dirivative_motor_d * 10;
 
+
+
+    const scalar angle_X =
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_AngleGimbal.x * 180.0/M_PI;
+
+    const scalar angle_Y  =
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_AngleGimbal.y * 180.0/M_PI;
+
+    const scalar angle_Z =
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_AngleGimbal.z * 180.0/M_PI;
+
     if(Numer > MAX - 10)
     {
         /*if(ui->checkBox_AngleYaw->isChecked()) */ ClearData("AngleYaw",0);
@@ -83,6 +94,12 @@ void MainWindow::Update()
         /*if(ui->checkBox_motor_B->isChecked())*/ ClearData("motor_B",3);
         /*if(ui->checkBox_motor_C->isChecked())*/ ClearData("motor_C",4);
         /*if(ui->checkBox_motor_D->isChecked())*/ ClearData("motor_D",5);
+
+
+        ClearData("Angle_Gimbal_X",6);
+        ClearData("Angle_Gimbal_Y",7);
+        ClearData("Angle_Gimbal_Z",8);
+
 
         Numer=0;
     }
@@ -99,6 +116,10 @@ void MainWindow::Update()
     if(ui->checkBox_motor_B->isChecked()) PushData("motor_B",dirivative_motor_b,3);
     if(ui->checkBox_motor_C->isChecked()) PushData("motor_C",dirivative_motor_c,4);
     if(ui->checkBox_motor_D->isChecked()) PushData("motor_D",dirivative_motor_d,5);
+
+    if(ui->checkBox_AngleGimbal_X->isChecked()) PushData("Angle_Gimbal_X",angle_X,6);
+    if(ui->checkBox_AngleGimbal_Y->isChecked()) PushData("Angle_Gimbal_Y",angle_Y,7);
+    //if(ui->checkBox_motor_C->isChecked()) PushData("Angle_Gimbal_Z",angle_Z,8);
 
     ui->widget_Plot->replot();
 
@@ -275,13 +296,31 @@ void MainWindow::on_checkBox_isCorrectDynamic_toggled(bool checked)
 
 void MainWindow::on_pushButton_Clear_clicked()
 {
-    /*if(ui->checkBox_AngleYaw->isChecked()) */ ClearData("AngleYaw",0);
-    /*if(ui->checkBox_AngleYaw_Derivative->isChecked())*/  ClearData("AngleYaw_Derivative",1);
+//    /*if(ui->checkBox_AngleYaw->isChecked()) */ ClearData("AngleYaw",0);
+//    /*if(ui->checkBox_AngleYaw_Derivative->isChecked())*/  ClearData("AngleYaw_Derivative",1);
 
-    /*if(ui->checkBox_motor_A->isChecked())*/ ClearData("motor_A",2);
-    /*if(ui->checkBox_motor_B->isChecked())*/ ClearData("motor_B",3);
-    /*if(ui->checkBox_motor_C->isChecked())*/ ClearData("motor_C",4);
-    /*if(ui->checkBox_motor_D->isChecked())*/ ClearData("motor_D",5);
+//    /*if(ui->checkBox_motor_A->isChecked())*/ ClearData("motor_A",2);
+//    /*if(ui->checkBox_motor_B->isChecked())*/ ClearData("motor_B",3);
+//    /*if(ui->checkBox_motor_C->isChecked())*/ ClearData("motor_C",4);
+//    /*if(ui->checkBox_motor_D->isChecked())*/ ClearData("motor_D",5);
+
+    ui->widget_Plot->replot();
+
+    ClearData("AngleYaw",0);
+    ClearData("AngleYaw_Derivative",1);
+
+    ClearData("motor_A",2);
+    ClearData("motor_B",3);
+    ClearData("motor_C",4);
+    ClearData("motor_D",5);
+
+
+    ClearData("Angle_Gimbal_X",6);
+    ClearData("Angle_Gimbal_Y",7);
+    ClearData("Angle_Gimbal_Z",8);
+
+    ui->widget_Plot->replot();
+
 
     Numer=0;
 }

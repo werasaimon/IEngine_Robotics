@@ -234,3 +234,11 @@ void VehicleRobotCar::AddTransform(const Transform &t)
     physBody_Wheel_2->SetCenterOfMassWorld(t3.GetPosition());
     physBody_Wheel_3->SetCenterOfMassWorld(t4.GetPosition());
 }
+
+void VehicleRobotCar::Stop()
+{
+    Wheel_HingeJoint0->SetMotorSpeed(0);
+    Wheel_HingeJoint1->SetMotorSpeed(0);
+    Wheel_HingeJoint2->SetMotorSpeed(0);
+    Wheel_HingeJoint3->SetMotorSpeed(0);
+}
