@@ -61,6 +61,11 @@ private slots:
 
 private:
 
+
+    bool m_IsSimulatePhysics;
+    bool m_IsTracking;
+    bool m_ISPloter;
+
     // Порт обмена данными
     quint16 m_Port;
     int MAX = 100;//

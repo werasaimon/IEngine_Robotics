@@ -44,34 +44,18 @@
 
 #include "IEngineGimbalStabilization.h"
 
+#include "IEngineFactory.h"
+
 using namespace IMath;
 using namespace IEngine;
 
 
 
 class SceneEngineRobocar;
+class FactoryMethod;
 
 //-----------------------------------------//
 
-
-
-class FactoryMethod
-{
-
-        FactoryMethod( SceneEngineRobocar *_scene) :
-        mScene(_scene)
-        {
-
-        }
-
-
-
-
-        SceneEngineRobocar *mScene;
-};
-
-
-//-----------------------------------------//
 
 struct SceneDscriptorr
 {
@@ -90,6 +74,10 @@ struct SceneDscriptorr
 
 class SceneEngineRobocar : public SceneMain
 {
+
+    friend class FactoryMethod;
+    friend class IEngineFactoryRobot;
+
     //-----------------------------//
     struct Mouse
     {
@@ -105,22 +93,27 @@ class SceneEngineRobocar : public SceneMain
     float mHeight;
 
     //-----------------------------//
+
     float mCameraZDistance;
     float mCameraAngleYaw;
     float mCameraAnglePitch;
 
     //-----------------------------//
+
     IComponentCamera *mCamera;
 
     //-----------------------------//
+
     OrientationSensor Sensor;
 
     //-----------------------------//
+
     std::vector<IComponentAbstract*>            mComponents;
     std::map<IComponentAbstract*, IProxyShape*> mProxyColliderConnects;
 
     float mTimeStep;
     IDynamicsWorld *mDynamicsWorld;
+
     //-----------------------------//
 
     void AddPhysicsProxyInModel( IComponentAbstract *model , IProxyShape* shape_colliders )
@@ -129,7 +122,6 @@ class SceneEngineRobocar : public SceneMain
     }
 
     //----------------------------//
-
 
     IEngineGimbalStabilization *mGimbalStabilization;
 
@@ -147,6 +139,9 @@ class SceneEngineRobocar : public SceneMain
     bool isSelectedStatus;
 
     //----------------------------//
+
+    IEngineFactoryRobot *mFactoryMethod;
+
 
 
 public:
@@ -185,5 +180,33 @@ public:
     void keyboard(int key );
     void destroy();
 };
+
+
+//-----------------------------------------//
+
+
+
+class FactoryMethod
+{
+
+    public:
+
+        FactoryMethod( SceneEngineRobocar *_scene) :
+        mScene(_scene)
+        {
+
+        }
+
+
+         VehicleRobotCar *CretaeRobotCar();
+
+
+
+
+        SceneEngineRobocar *mScene;
+};
+
+
+//-----------------------------------------//
 
 #endif // SCENEENGINEROBOCAR_H

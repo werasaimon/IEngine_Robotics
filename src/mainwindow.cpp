@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(Update()));
 
-    for(int i=0; i<6 + 3; ++i)
+    for(int i=0; i < 6 + 3; ++i)
     {
          ui->widget_Plot->addGraph();
          QPen pen1;
@@ -167,10 +167,14 @@ void MainWindow::on_pushButton_Timer_clicked()
     if(!timer->isActive())
     {
        timer->start(100);
+       m_ISPloter= true;
+       ui->pushButton_Timer->setText("Plotter - ON");
     }
     else
     {
+       m_ISPloter = false;
        timer->stop();
+       ui->pushButton_Timer->setText("Plotter - OFF");
     }
 }
 
@@ -189,8 +193,18 @@ void MainWindow::on_checkBox_Gimbal_toggled(bool checked)
 
 void MainWindow::on_pushButton_simulate_clicked()
 {
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mSceneDscriptor.m_IsSimulateDynamics =
-            !static_cast<SceneEngineRobocar*>(ui->widget->scene())->mSceneDscriptor.m_IsSimulateDynamics;
+    if(m_IsSimulatePhysics)
+    {
+       m_IsSimulatePhysics = false;
+       ui->pushButton_simulate->setText("Simulate - ON");
+    }
+    else
+    {
+       m_IsSimulatePhysics = true;
+       ui->pushButton_simulate->setText("Simulate - OFF");
+    }
+
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mSceneDscriptor.m_IsSimulateDynamics = !m_IsSimulatePhysics;
 }
 
 
@@ -255,8 +269,18 @@ void MainWindow::ClearData(QString _str, int _n_graph)
 
 void MainWindow::on_pushButton_LQR_clicked()
 {
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsDynamic_LQR =
-            !static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsDynamic_LQR;
+
+    if((m_IsTracking))
+    {
+       m_IsTracking = false;
+       ui->pushButton_LQR->setText("Tracking - ON");
+    }
+    else
+    {
+       m_IsTracking = true;
+       ui->pushButton_LQR->setText("Tracking - OFF");
+    }
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsDynamic_LQR = !m_IsTracking;
 }
 
 
@@ -268,7 +292,7 @@ void MainWindow::on_horizontalSlider_speedPoint_sliderMoved(int position)
 
 void MainWindow::on_spinBox_extrem_MIN_MAX_valueChanged(int arg1)
 {
-    //static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.extrem_MIN_MAX = arg1;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.extrem_MIN_MAX = arg1;
 }
 
 

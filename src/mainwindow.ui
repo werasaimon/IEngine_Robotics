@@ -37,21 +37,21 @@
              <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="pushButton_simulate">
                <property name="text">
-                <string>simulate</string>
+                <string>Simulate - OFF</string>
                </property>
               </widget>
              </item>
              <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="pushButton_Timer">
                <property name="text">
-                <string>Plotter</string>
+                <string>Plotter - OFF</string>
                </property>
               </widget>
              </item>
              <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="pushButton_LQR">
                <property name="text">
-                <string>tracking</string>
+                <string>Tracking - OFF</string>
                </property>
               </widget>
              </item>
