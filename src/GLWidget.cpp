@@ -143,6 +143,7 @@ void GLWidget::paintGL()
 void GLWidget::timerEvent(QTimerEvent *e)
 {
     mScene->update();
+   // e->accept();
     update();
 }
 

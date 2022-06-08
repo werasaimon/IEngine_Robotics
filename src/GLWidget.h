@@ -144,7 +144,8 @@ public slots:
     }
 
 
-private:
+//private:
+public:
 
     QBasicTimer  timer;
 

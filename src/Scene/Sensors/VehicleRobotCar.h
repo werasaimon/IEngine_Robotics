@@ -157,6 +157,7 @@ public:
 
 
     void UpdateControlPointGuidance( const Vector3& target_position );
+    void UpdateControlPointGuidance2( const Vector3& target_position );
     void Update(scalar _dt, const Vector3 &target_position);
     void AddTransform(const Transform& t);
     void Stop();

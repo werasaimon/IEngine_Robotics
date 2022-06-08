@@ -53,7 +53,7 @@ class IEngineFactoryRobot : public IEngineFactory
         }
 
 
-        VehicleRobotCar *CreateRobot(RobotDescriptor _descriptor);
+        VehicleRobotCar *CreateRobot(RobotDescriptor _descriptor, const Transform& transform);
 
 
 

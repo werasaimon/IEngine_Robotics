@@ -5,6 +5,43 @@
 #include <QLineEdit>
 #include <QLabel>
 
+#include <QFileDialog>
+
+/**/
+struct Quaternionn
+{
+  float w, x, y, z;
+};
+
+struct DataDescriptor
+{
+  int num;
+  Quaternion Quat;
+  float EulerX;
+  float EulerY;
+  float EulerZ;
+
+  //--------------//
+
+  float AccBiasX;
+  float AccBiasY;
+  float AccBiasZ;
+
+  float GyroBiasX;
+  float GyroBiasY;
+  float GyroBiasZ;
+
+  float MagBiasX;
+  float MagBiasY;
+  float MagBiasZ;
+
+  float MagScaleX;
+  float MagScaleY;
+  float MagScaleZ;
+
+  //--------------//
+
+} _dataDescriptor;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +51,13 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("IEngine - Werasaimon");
 
     timer = new QTimer(this);
+    timer2 = new QTimer(this);
+    m_socket = new QUdpSocket(this);
+
     connect(timer, SIGNAL(timeout()), this, SLOT(Update()));
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
+    m_IsConnectUDP = false;
 
     for(int i=0; i < 6 + 3; ++i)
     {
@@ -26,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     Numer = 0;
+    m_Port = 8888;
 
     // give the axes some labels:
     ui->widget_Plot->xAxis->setLabel("Time");
@@ -33,6 +77,14 @@ MainWindow::MainWindow(QWidget *parent) :
     // set axes ranges, so we see all data:
     ui->widget_Plot->xAxis->setRange(0, MAX);
     ui->widget_Plot->yAxis->setRange(-180, 180);
+
+
+
+//     connect(ui->pushButton_OnOFF , SIGNAL(clicked()) , this , SLOT(onStartTime()) );
+//     connect(timer , SIGNAL(timeout()) , this , SLOT(Updatee()) );
+
+//     connect(ui->horizontalSliderX, SIGNAL(valueChanged(int)), this, SLOT(SliderSpeedX(int)));
+//     connect(ui->horizontalSliderY, SIGNAL(valueChanged(int)), this, SLOT(SliderSpeedY(int)));
 }
 
 MainWindow::~MainWindow()
@@ -162,6 +214,20 @@ void MainWindow::Update()
 
 }
 
+void MainWindow::Updatee()
+{
+    // отыслаем данные на ROBO_CAR
+    QString ipAddresStr ;
+    m_socket->writeDatagram( (char*)&data_trransmission , sizeof(DataPacketRemote) , QHostAddress( ipAddresStr ) , m_Port);
+
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->data_trransmission = data_trransmission;
+
+    char buff[255]="no packet .... \n";
+    int nsize = m_socket->readDatagram( (char*)&_dataDescriptor , sizeof(DataDescriptor) );
+    buff[nsize]=0;
+
+}
+
 void MainWindow::on_pushButton_Timer_clicked()
 {
     if(!timer->isActive())
@@ -270,10 +336,12 @@ void MainWindow::ClearData(QString _str, int _n_graph)
 void MainWindow::on_pushButton_LQR_clicked()
 {
 
-    if((m_IsTracking))
+    if((m_IsTracking) && !m_IsConnectUDP)
     {
        m_IsTracking = false;
        ui->pushButton_LQR->setText("Tracking - ON");
+       //ui->checkBox_TrackerMove->setCheckable(false);
+       //static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTrackingMove = false;
     }
     else
     {
@@ -347,5 +415,213 @@ void MainWindow::on_pushButton_Clear_clicked()
 
 
     Numer=0;
+}
+
+
+void MainWindow::on_pushButton_StartUDP_clicked()
+{
+    if(m_IsConnectUDP == false)
+    {
+        bool result = m_socket->bind(QHostAddress("192.168.1.8"), m_Port);
+        qDebug() << m_socket->localAddress() << m_socket->localPort();
+
+        if(result)
+        {
+            m_IsConnectUDP = true;
+            qDebug() << "CONNECT";
+            ui->pushButton_StartUDP->setText( m_socket->localAddress().toString() + " :" + QString::number(m_socket->localPort()));
+
+            static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints.clear();
+
+            if((!m_IsTracking))
+            {
+               m_IsTracking = true;
+               ui->pushButton_LQR->setText("Tracking - OFF");
+               static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsDynamic_LQR = !m_IsTracking;
+               ui->checkBox_TrackerMove->setChecked(false);
+            }
+        }
+        else
+        {
+            qDebug() << "FAIL";
+            ui->pushButton_StartUDP->setText("FAIL");
+        }
+    }
+    else
+    {
+        ui->pushButton_StartUDP->setText("Start_UDP");
+        m_socket->close();
+        m_IsConnectUDP = false;
+    }
+}
+
+void MainWindow::readyRead()
+{
+
+    // when data comes in
+      QByteArray buffer;
+      buffer.resize(m_socket->pendingDatagramSize());
+
+      QHostAddress sender;
+      quint16 senderPort;
+
+
+//      // отыслаем данные на ROBO_CAR
+//      QString ipAddresStr ;
+//      m_socket->writeDatagram( (char*)&data_trransmission , sizeof(DataPacketRemote) , QHostAddress( ipAddresStr ) , m_Port);
+
+//      static_cast<SceneEngineRobocar*>(ui->widget->scene())->data_trransmission = data_trransmission;
+
+//      char buff[255]="no packet .... \n";
+//      int nsize = m_socket->readDatagram( (char*)&_dataDescriptor , sizeof(DataDescriptor) );
+//      buff[nsize]=0;
+
+      // qint64 QUdpSocket::readDatagram(char * data, qint64 maxSize,
+      //                 QHostAddress * address = 0, quint16 * port = 0)
+      // Receives a datagram no larger than maxSize bytes and stores it in data.
+      // The sender's host address and port is stored in *address and *port
+      // (unless the pointers are 0).
+
+      m_socket->readDatagram(/*buffer.data()*/(char*)&data_trransmission, buffer.size(), &sender, &senderPort);
+      static_cast<SceneEngineRobocar*>(ui->widget->scene())->data_trransmission = data_trransmission;
+
+      qDebug() << "Message from: " << sender.toString();
+      qDebug() << "Message port: " << senderPort;
+      qDebug() << "Message: " << buffer;
+}
+
+
+void MainWindow::on_actionsave_tracking_triggered()
+{
+
+//    QByteArray data;
+//    QFile file("in.txt");
+//    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+//        return;
+
+//    QTextStream in(&file);
+//    // You could use readAll() here, too.
+//    while (!in.atEnd())
+//    {
+//        QString line = in.readLine();
+//        data.append(line);
+//    }
+
+//    file.close();
+
+        //   // qDebug() << "Save";
+        //    QString filename = QFileDialog::getSaveFileName(this, "test sav e name", ".", "Text files (*.txt);" );
+        //    qDebug() << "name is : " << filename;
+        //    if( !filename.isNull() )
+        //      {
+        //        qDebug( "%s", filename.toStdString().c_str() );
+        //      }
+
+   // timer->stop();
+
+   ui->widget->timer.stop();
+
+
+    QString filename = QFileDialog::getSaveFileName(nullptr, "test sav e name", ".", "Text files (*.txt);" );;
+//    QFile file(filename);
+//    if (file.open(QIODevice::ReadWrite))
+//    {
+//        QTextStream stream(&file);
+//        stream << "something" << endl;
+//    }
+
+    // Create a new file
+      QFile file(filename);
+      file.open(QIODevice::WriteOnly | QIODevice::Text);
+      QTextStream out(&file);
+      out << "This file is generated by Qt\n";
+
+
+      auto V_array = static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints;
+
+      for(const auto &it : V_array)
+      {
+          out << it.x << "," << it.y << "," << it.z << "\n";
+      }
+
+
+      // optional, as QFile destructor will already do it:
+      file.close();
+
+     // timer->start(10);
+
+      ui->widget->timer.start(10,ui->widget);
+}
+
+
+void MainWindow::on_actionopen_tracking_triggered()
+{
+
+    ui->widget->timer.stop();
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Open Config"), "", tr("Text Files (*.txt);; CID Files (*.cid)"));
+
+
+    QFile file(fileName); // this is a name of a file text1.txt sent from main method
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints.clear();
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->num = 0;
+
+
+        qDebug() << fileName;
+        QTextStream in(&file);
+        QString line = in.readLine();
+
+
+        bool isInit = true; Vector3 P;
+        auto &V_array = static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints;
+        while(!in.atEnd())
+        {
+           QString line = in.readLine();
+
+           QRegExp rx("[,]");// match a comma or a space
+           QStringList list = line.split(rx, QString::SkipEmptyParts);
+
+           auto x = list[0].toDouble();
+           auto y = list[1].toDouble();
+           auto z = list[2].toDouble();
+           V_array.push_back(Vector3(x,y,z));
+           qDebug() << x << y << z;
+           qDebug() << line;
+
+           if(isInit)
+           {
+              isInit = false;
+              P = Vector3(x,y,z);
+           }
+        }
+
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_EndPoint = P;
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_pickPoint =
+        //static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_PointS =
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_EndPoint + Vector3::Y * 3;
+
+
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_PointS =
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->physBody_Base->GetTransform().GetPosition();
+
+       // static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->physBody_Base->SetCenterOfMassWorld(P+ Vector3::Y * 3);
+
+        file.close();
+    }
+
+    ui->widget->timer.start(10,ui->widget);
+}
+
+
+
+void MainWindow::on_checkBox_TrackerMove_toggled(bool checked)
+{
+    qDebug() << "Cheked Tracking Move : " ;
+
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints.clear();
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->num = 0;
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTrackingMove = checked;
 }
 

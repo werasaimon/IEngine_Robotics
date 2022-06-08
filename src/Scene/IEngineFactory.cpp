@@ -9,7 +9,7 @@ IEngineFactory::IEngineFactory(SceneMain *_EngineScene) :
 
 }
 
-VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor)
+VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor , const Transform &transform)
 {
 
     SceneEngineRobocar *mScene = static_cast<SceneEngineRobocar*>(mSceneEngin);
@@ -17,12 +17,12 @@ VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor)
 
     MeshGenerator::CuboidDescriptor cuboid_dscp_down(_descriptor.mSize);//Vector3(25.0,1.0,12.0));
     IComponentMesh *BoxDown = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down));
-    BoxDown->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(0,0,0)));
+    BoxDown->SetTransformMatrix(Matrix4::CreateTranslation( transform * Vector3(0,0,0)));
     mScene->mComponents.push_back(BoxDown);
 
-    Transform transform_4 = BoxDown->GetTransformMatrixHierarchy();
-    transform_4.SetPosition(Vector3(0,0,0));
-    IRigidBody* physBody_Target_4 = mScene->mDynamicsWorld->CreateRigidBody(transform_4);
+    //Transform transform_4;// = BoxDown->GetTransformMatrixHierarchy();
+    //transform_4.SetPosition(transform * Vector3(0,0,0));
+    IRigidBody* physBody_Target_4 = mScene->mDynamicsWorld->CreateRigidBody(transform);
 
     Transform trans = Transform::Identity();
     trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 1.5f);
@@ -34,14 +34,16 @@ VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor)
 
     //--------------------------------------//
 
+    Vector3 Position_A = transform.GetBasis() * Vector3(10,height,10) + physBody_Target_4->CenterOfMassWorld();
+
     MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_0(Vector3(_descriptor.mRadiusWheels));
     IMesh *Mesh_Wheel_0 = new IMeshGenerate(sphere_dscp_wheel_0);
     IComponentMesh *Wheel_0 = new IComponentMesh(Mesh_Wheel_0);
-    Wheel_0->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(10,0,10)));
+    Wheel_0->SetTransformMatrix(Matrix4::CreateTranslation(Position_A));
     mScene->mComponents.push_back(Wheel_0);
 
     Transform transform_0 = Mesh_Wheel_0->GetTransformMatrixHierarchy();
-    transform_0.SetPosition(Vector3(10,height,10) + physBody_Target_4->CenterOfMassWorld());
+    transform_0.SetPosition(Position_A);
     IRigidBody* physBody_Wheel_0 = mScene->mDynamicsWorld->CreateRigidBody(transform_0);
     IProxyShape* proxy_sphere_0 = physBody_Wheel_0->AddCollisionShape(new ICollisionShapeSphere(_descriptor.mRadiusWheels),1.f);
     mScene->AddPhysicsProxyInModel(Wheel_0,proxy_sphere_0);
@@ -49,29 +51,35 @@ VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor)
 
     //--------------------------------------//
 
+    Vector3 Position_B = transform.GetBasis() * Vector3(-10,height,10) + physBody_Target_4->CenterOfMassWorld();
+
     MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_1(Vector3(_descriptor.mRadiusWheels));
     IMesh *Mesh_Wheel_1 = new IMeshGenerate(sphere_dscp_wheel_1);
     IComponentMesh *Wheel_1 = new IComponentMesh(Mesh_Wheel_1);
-    Wheel_1->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(-10,0,10)));
+    Wheel_1->SetTransformMatrix(Matrix4::CreateTranslation(Position_B));
     mScene->mComponents.push_back(Wheel_1);
 
     Transform transform_1 = Mesh_Wheel_1->GetTransformMatrixHierarchy();
-    transform_1.SetPosition(Vector3(-10,height,10) + physBody_Target_4->CenterOfMassWorld());
+    transform_1.SetPosition(Position_B);
     IRigidBody* physBody_Wheel_1 = mScene->mDynamicsWorld->CreateRigidBody(transform_1);
     IProxyShape* proxy_sphere_1 = physBody_Wheel_1->AddCollisionShape(new ICollisionShapeSphere(_descriptor.mRadiusWheels),1.f);
     mScene->AddPhysicsProxyInModel(Wheel_1,proxy_sphere_1);
     physBody_Wheel_1->SetType(BodyType::DYNAMIC);
 
+
+
     //--------------------------------------//
+
+    Vector3 Position_C = transform.GetBasis() * Vector3(10,height,-10) + physBody_Target_4->CenterOfMassWorld();
 
     MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_2(Vector3(_descriptor.mRadiusWheels));
     IMesh *Mesh_Wheel_2 = new IMeshGenerate(sphere_dscp_wheel_2);
     IComponentMesh *Wheel_2 = new IComponentMesh(Mesh_Wheel_2);
-    Wheel_2->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(10,0,-10.0)));
+    Wheel_2->SetTransformMatrix(Matrix4::CreateTranslation(Position_C));
     mScene->mComponents.push_back(Wheel_2);
 
     Transform transform_2 = Mesh_Wheel_2->GetTransformMatrixHierarchy();
-    transform_2.SetPosition(Vector3(10,height,-10) + physBody_Target_4->CenterOfMassWorld());
+    transform_2.SetPosition(Position_C);
     IRigidBody* physBody_Wheel_2 = mScene->mDynamicsWorld->CreateRigidBody(transform_2);
     IProxyShape* proxy_sphere_2 = physBody_Wheel_2->AddCollisionShape(new ICollisionShapeSphere(_descriptor.mRadiusWheels),1.f);
     mScene->AddPhysicsProxyInModel(Wheel_2,proxy_sphere_2);
@@ -79,19 +87,22 @@ VehicleRobotCar *IEngineFactoryRobot::CreateRobot(RobotDescriptor _descriptor)
 
     //--------------------------------------//
 
+    Vector3 Position_D = transform.GetBasis() * Vector3(-10,height,-10) + physBody_Target_4->CenterOfMassWorld();
+
     MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_3(Vector3(_descriptor.mRadiusWheels));
     IMesh *Mesh_Wheel_3 = new IMeshGenerate(sphere_dscp_wheel_3);
     IComponentMesh *Wheel_3 = new IComponentMesh(Mesh_Wheel_3);
-    Wheel_3->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(-10,0,-10.0)));
+    Wheel_3->SetTransformMatrix(Matrix4::CreateTranslation(Position_D));
     mScene->mComponents.push_back(Wheel_3);
 
     Transform transform_3 = Mesh_Wheel_3->GetTransformMatrixHierarchy();
-    transform_3.SetPosition(Vector3(-10,height,-10)+ physBody_Target_4->CenterOfMassWorld());
+    transform_3.SetPosition(Position_D);
     IRigidBody* physBody_Wheel_3 = mScene->mDynamicsWorld->CreateRigidBody(transform_3);
     IProxyShape* proxy_sphere_3 = physBody_Wheel_3->AddCollisionShape(new ICollisionShapeSphere(_descriptor.mRadiusWheels),1.f);
     mScene->AddPhysicsProxyInModel(Wheel_3,proxy_sphere_3);
     physBody_Wheel_3->SetType(BodyType::DYNAMIC);
 
+    //--------------------------------------//
 
     IPhysicsMaterial phys_material;
     phys_material.SetBounciness(0.0);

@@ -56,6 +56,34 @@ class FactoryMethod;
 
 //-----------------------------------------//
 
+// Структура данных для ROBO_CAR
+// Структура кнотроля робокара
+struct DataPacketRemote
+{
+    int  speed_PWM_X=0; // скорость вращения на ШИМ _А
+    int  speed_PWM_Y=0; // скорость вращения на ШИМ _В
+    int  turn = 0;
+    bool is_null_pos;
+
+    float kp;
+    float kd;
+    float ki;
+    float kf;
+    float kt;
+
+    DataPacketRemote( int _x=0, int _y=0, bool _is_null_pos=false)
+    :speed_PWM_X(_x),
+     speed_PWM_Y(_y),
+     is_null_pos(_is_null_pos)
+    {
+
+    }
+
+};
+
+
+//-----------------------------------------//
+
 
 struct SceneDscriptorr
 {
@@ -143,23 +171,33 @@ class SceneEngineRobocar : public SceneMain
     IEngineFactoryRobot *mFactoryMethod;
 
 
+    //---------------------------//
+
 
 public:
 
-    Vector3 m_AngleGimbal;
+    DataPacketRemote data_trransmission;
 
+    Vector3 m_AngleGimbal;
 
     SceneDscriptorr  mSceneDscriptor;
     VehicleRobotCar *mRoboCar;
 
 
-
+    bool m_IsFix;
     bool m_IsDynamic_LQR;
     int num;
     Vector3 m_PointS;
     Vector3 m_EndPoint;
     std::vector<Vector3> mPoints;
     float speed_point = 1.0;
+    float angle_yaw;
+
+
+    bool m_IsTrackingMove;
+    std::vector<Vector3> mTrackerPoints;
+    Vector3 m_pickPoint;
+
 
 
 public:
@@ -179,6 +217,9 @@ public:
 
     void keyboard(int key );
     void destroy();
+
+
+    void Stop();
 };
 
 
@@ -198,10 +239,7 @@ class FactoryMethod
         }
 
 
-         VehicleRobotCar *CretaeRobotCar();
-
-
-
+        VehicleRobotCar *CretaeRobotCar();
 
         SceneEngineRobocar *mScene;
 };

@@ -329,6 +329,28 @@ namespace IMath
 
         }
 
+
+        //-------------[ conversion ]-----------------------------
+        /**
+         * Conversion to pointer operator
+         * @return Pointer to internally stored (in management of class IVector2D<T>)
+         * used for passing IVector2D<T> values to gl*2[fd] functions.
+         */
+        operator IMatrix3x3<T>*()
+        {
+            return this->GetRotMatrix();
+        }
+        /**
+         * Conversion to pointer operator
+         * @return Constant Pointer to internally stored (in management of class IVector2D<T>)
+         * used for passing IVector2D<T> values to gl*2[fd] functions.
+         */
+        operator const IMatrix3x3<T>*() const
+        {
+            return this->GetRotMatrix();
+        }
+
+
         //---------------------- Methods ---------------------//
 
 

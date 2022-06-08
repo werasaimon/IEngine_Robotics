@@ -55,6 +55,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_StartUDP">
+               <property name="text">
+                <string>Start_UDP</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -261,7 +268,7 @@
              <item alignment="Qt::AlignRight">
               <widget class="QSpinBox" name="spinBox_Minimal">
                <property name="value">
-                <number>1</number>
+                <number>3</number>
                </property>
               </widget>
              </item>
@@ -273,6 +280,13 @@
               <widget class="QCheckBox" name="checkBox_isCorrectDynamic">
                <property name="text">
                 <string>Correct Dynamics</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_TrackerMove">
+               <property name="text">
+                <string>TrackingMove</string>
                </property>
               </widget>
              </item>
@@ -436,20 +450,38 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionsave_tracking"/>
+    <addaction name="actionopen_tracking"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
+  <action name="actionsave_tracking">
+   <property name="text">
+    <string>save tracking</string>
+   </property>
+  </action>
+  <action name="actionopen_tracking">
+   <property name="text">
+    <string>open tracking</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>GLWidget</class>
    <extends>QWidget</extends>
-   <header>GLWidget.h</header>
+   <header location="global">GLWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
+   <header location="global">qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

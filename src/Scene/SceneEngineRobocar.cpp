@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+
 //----------------------------------------------------------//
 
 VehicleRobotCar *FactoryMethod::CretaeRobotCar()
@@ -188,29 +189,37 @@ void SceneEngineRobocar::initialization()
 {
     glClearColor(0.f,0.f,0.0f,1.f);
 
-    m_PointS = Vector3::X * 15.f;
+    m_PointS = Vector3::X * 5.f;
     m_IsDynamic_LQR = false;
+    m_IsTrackingMove = false;
 
     //===========================//
 
-    for( int i=0; i < 5; ++i )
-    {
-        float x = i * 30;
-        float y = cos(i*2) * 20;
-        float z =-13.5;
-        mPoints.push_back( m_PointS + Vector3(x,z,y) - Vector3::Z * 20);
-    }
+//    for( int i=0; i < 5; ++i )
+//    {
+//        float x = i * 30;
+//        float y = cos(i*2) * 20;
+//        float z =-13.5;
+//        mPoints.push_back( m_PointS + Vector3(x,z,y) - Vector3::Z * 20);
+//    }
 
-    Vector3 end = mPoints[mPoints.size()-1];
-    for( int i=0; i < 5; ++i )
-    {
-        float x = i * 30;
-        float y = sin(i*2) * 20;
-        float z =-13.5;
-        mPoints.push_back( end + Vector3(y,0,x) );
-    }
+//    Vector3 end = mPoints[mPoints.size()-1];
+//    for( int i=0; i < 4; ++i )
+//    {
+//        float x = i * 30;
+//        float y = sin(i*2) * 20;
+//        float z =-13.5;
+//        mPoints.push_back( Vector3(y,0,x) );
+//    }
+
+
+    mPoints.push_back( Vector3(50,-13.5,50) + Vector3::X * 15.);
+    mPoints.push_back( Vector3(-50,-13.5,50) + Vector3::X * 15.);
+    mPoints.push_back( Vector3(-50,-13.5,-50) + Vector3::X * 15.);
+    mPoints.push_back( Vector3(50,-13.5,-50) + Vector3::X * 15.);
 
     m_EndPoint = mPoints[num=0];
+    m_PointS = mPoints[0];
 
             //===========================//
 
@@ -244,7 +253,6 @@ void SceneEngineRobocar::initialization()
             mTimeStep = 1.0/60.f;
             mDynamicsWorld = new IDynamicsWorld(Vector3::Y * -20);
 
-
             mSceneDscriptor.m_IsSimulateDynamics = false;
 
             //--------------------------------------//
@@ -256,10 +264,19 @@ void SceneEngineRobocar::initialization()
 
             //--------------------------------------//
 
-            mRoboCar = mFactoryMethod->CreateRobot(RobotDescriptor(Vector3(25.0,1.0,12.0),4));
+            Transform init_transform;
+            init_transform.SetPosition(m_pickPoint = m_PointS = m_EndPoint + Vector3::Y * 3);
+
+            Quaternion q = Quaternion::FromAngleAxis(Vector3::Y,M_PI * -2.f);
+            init_transform.SetBasis(q.GetRotMatrix());
+
+            mRoboCar = mFactoryMethod->CreateRobot(RobotDescriptor(Vector3(25.0,1.0,12.0),4),init_transform);
 
 
 
+//            auto tt = mRoboCar->physBody_Base->GetTransform();
+//            tt.SetPosition(m_EndPoint);
+//            mRoboCar->physBody_Base->SetCenterOfMassWorld(m_EndPoint);
 
             //--------------------------------------//
 
@@ -453,11 +470,11 @@ void SceneEngineRobocar::initialization()
 
 
 
-            mGimbalStabilization = new IEngineGimbalStabilization();
-            mComponents.push_back(mGimbalStabilization->mGimbalRoot);
-            mComponents.push_back(mGimbalStabilization->mGimbalConnectA);
-            mComponents.push_back(mGimbalStabilization->mGimbalConnectB);
-            mComponents.push_back(mGimbalStabilization->mGimbalConnectC);
+//            mGimbalStabilization = new IEngineGimbalStabilization();
+//            mComponents.push_back(mGimbalStabilization->mGimbalRoot);
+//            mComponents.push_back(mGimbalStabilization->mGimbalConnectA);
+//            mComponents.push_back(mGimbalStabilization->mGimbalConnectB);
+//            mComponents.push_back(mGimbalStabilization->mGimbalConnectC);
 
 
 //            Transform transform_s = transform_t;
@@ -522,15 +539,15 @@ void SceneEngineRobocar::initialization()
 
             //--------------------------------------//
 
+            m_PointS = mRoboCar->physBody_Base->GetTransform().GetPosition();
+
 
 }
 
 void SceneEngineRobocar::render(float FrameTime)
 {
 
-        glEnable(GL_SCISSOR_TEST);
-
-
+    glEnable(GL_SCISSOR_TEST);
 
     mCameraAnglePitch = IClamp(mCameraAnglePitch,scalar(-M_PI * 0.495),scalar(M_PI * 0.495));
     Matrix4 MRot;
@@ -569,6 +586,7 @@ void SceneEngineRobocar::render(float FrameTime)
 //    }
 
 
+    /**/
     glPushMatrix();
     glColor3f(1,0,0);
     GLUquadric *quad;
@@ -576,21 +594,47 @@ void SceneEngineRobocar::render(float FrameTime)
     glTranslatef(m_PointS.x,m_PointS.y=-13.5,m_PointS.z);
     gluSphere(quad,2,100,20);
     glPopMatrix();
+    /**/
 
+    {
+        glPushMatrix();
+        glColor3f(1,0,0);
+        GLUquadric *quad;
+        quad = gluNewQuadric();
+        Vector3 p = mRoboCar->physBody_Base->GetTransform().GetPosition();
+        glTranslatef(p.x,p.y+5,p.z);
+        gluSphere(quad,2,20,20);
+        glPopMatrix();
+    }
+
+
+//    for( const auto &it : mPoints )
 //    {
 //        glPushMatrix();
 //        glColor3f(1,0,0);
 //        GLUquadric *quad;
 //        quad = gluNewQuadric();
-//        Vector3 p = physBody_Target_4->GetTransform().GetPosition() +
-//                    physBody_Target_4->GetTransform().GetRotation() * Vector3::X * 10;
-//        glTranslatef(p.x,p.y,p.z);
-//        gluSphere(quad,2,100,20);
+//        glTranslatef(it.x,it.y,it.z);
+//        gluSphere(quad,0.4,100,20);
 //        glPopMatrix();
 //    }
 
 
-    for( const auto &it : mPoints )
+//    for( int i=0; i < (int)mPoints.size(); ++i )
+//    {
+//        glPushMatrix();
+//        glColor3f(0,1,0);
+//        glLineWidth(3);
+//        glBegin(GL_LINES);
+//        glVertex3fv(mPoints[i]);
+//        glVertex3fv(mPoints[((i+1)%mPoints.size() != 0)? i+1 : 0]);
+//        glEnd();
+//        glPopMatrix();
+//    }
+
+    //===========================================//
+
+    for( const auto &it : mTrackerPoints )
     {
         glPushMatrix();
         glColor3f(1,0,0);
@@ -601,15 +645,14 @@ void SceneEngineRobocar::render(float FrameTime)
         glPopMatrix();
     }
 
-
-    for( int i=0; i < (int)mPoints.size(); ++i )
+    for( int i=0; i < (int)mTrackerPoints.size()-1; ++i )
     {
         glPushMatrix();
         glColor3f(0,1,0);
         glLineWidth(3);
         glBegin(GL_LINES);
-        glVertex3fv(mPoints[i]);
-        glVertex3fv(mPoints[((i+1)%mPoints.size() != 0)? i+1 : 0]);
+        glVertex3fv(mTrackerPoints[i]);
+        glVertex3fv(mTrackerPoints[((i+1)%mTrackerPoints.size() != 0)? i+1 : 0]);
         glEnd();
         glPopMatrix();
     }
@@ -622,12 +665,16 @@ void SceneEngineRobocar::render(float FrameTime)
 //    glEnd();
 //    glPopMatrix();
 
-    if(mSceneDscriptor.m_IsSimulateDynamics)
-    {
-        Transform t = mRoboCar->physBody_Base->GetTransform();
-        t.SetPosition( t.GetPosition() + t.GetBasis() * Vector3::Y * 6.f);
-        mGimbalStabilization->mGimbalRoot->SetTransform(t);
-    }
+//    if(mSceneDscriptor.m_IsSimulateDynamics)
+//    {
+//        if(mRoboCar->physBody_Base)
+//        {
+//            Transform t = mRoboCar->physBody_Base->GetTransform();
+//            t.SetPosition( t.GetPosition() + t.GetBasis() * Vector3::Y * 6.f);
+//            mGimbalStabilization->mGimbalRoot->SetTransform(t);
+
+//        }
+//    }
 
 
 
@@ -711,78 +758,78 @@ void SceneEngineRobocar::render(float FrameTime)
 
 
 
-    glClearColor(0, 0, 0, 0);
+    //    glClearColor(0, 0, 0, 0);
 
-   //-------------------------------//
-    glCullFace(GL_BACK);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
-    glEnable(GL_STENCIL_TEST);
-    glViewport(0,mHeight - mHeight/4, mWidth/4,mHeight/4);
-    glScissor(0,mHeight - mHeight/4,mWidth/4,mHeight/4);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //   //-------------------------------//
+    //    glCullFace(GL_BACK);
+    //    glEnable(GL_DEPTH_TEST);
+    //    glEnable(GL_SCISSOR_TEST);
+    //    glEnable(GL_STENCIL_TEST);
+    //    glViewport(0,mHeight - mHeight/4, mWidth/4,mHeight/4);
+    //    glScissor(0,mHeight - mHeight/4,mWidth/4,mHeight/4);
+    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //
-
-
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(mCamera->getCamera2().ProjectionMatrix());
-
-    glMatrixMode(GL_MODELVIEW);
+    //    //
 
 
+    //    glLoadIdentity();
+    //    glMatrixMode(GL_PROJECTION);
+    //    glLoadMatrixf(mCamera->getCamera2().ProjectionMatrix());
 
-    /**
-    Vector3 Translation =
-           Vector3(0,0,4) * mGimbalStabilization->mGimbalConnectC->GetTransformMatrixHierarchy();
-    Quaternion RotationConj = Quaternion::LookAtRH( Translation ,
-                                                    NuzzleChoice->GetTransformMatrix().GetTranslation() ,
-                                                    Vector3::Y );
+    //    glMatrixMode(GL_MODELVIEW);
 
 
-    Matrix4 TransformMatrix;
-    TransformMatrix.SetToIdentity();
-    TransformMatrix.Rotate(RotationConj.GetConjugate());
-    TransformMatrix.Translate(-Translation);
 
-    glLoadMatrixf(TransformMatrix);
-    **/
-
-    Transform T = mGimbalStabilization->mGimbalConnectC->GetTransformHierarchy().GetInverse();
-    glLoadMatrixf(T.GetTransformMatrix());
+    //    /**
+    //    Vector3 Translation =
+    //           Vector3(0,0,4) * mGimbalStabilization->mGimbalConnectC->GetTransformMatrixHierarchy();
+    //    Quaternion RotationConj = Quaternion::LookAtRH( Translation ,
+    //                                                    NuzzleChoice->GetTransformMatrix().GetTranslation() ,
+    //                                                    Vector3::Y );
 
 
-    int i = 0;
-    for(auto it=mComponents.begin(); it<mComponents.end(); ++it , ++i)
-    {
-        if(i == 10) continue;
+    //    Matrix4 TransformMatrix;
+    //    TransformMatrix.SetToIdentity();
+    //    TransformMatrix.Rotate(RotationConj.GetConjugate());
+    //    TransformMatrix.Translate(-Translation);
 
-        Matrix4 MultMatrix = (*it)->GetTransformMatrixHierarchy();
+    //    glLoadMatrixf(TransformMatrix);
+    //    **/
 
-        //-------------------------------------------------------------//
-        if(mSceneDscriptor.m_IsSimulateDynamics)
-        {
-            auto iter_proxy = mProxyColliderConnects.find((*it));
-            if(iter_proxy != mProxyColliderConnects.end())
-            {
-                MultMatrix = iter_proxy->second->GetWorldTransform().GetTransformMatrix();
-            }
-        }
-        //-------------------------------------------------------------//
+    //    Transform T = mGimbalStabilization->mGimbalConnectC->GetTransformHierarchy().GetInverse();
+    //    glLoadMatrixf(T.GetTransformMatrix());
 
-        glPushMatrix();
-        glMultMatrixf(MultMatrix);
-        glColor3f(0.5,0.5,0.5);
-        OpenGLRender::DrawComponentMeshFill(static_cast<IComponentMesh*>(*it)->Modelmesh());
-        glColor3f(1,1,1);
-        OpenGLRender::DrawComponentMeshLine(static_cast<IComponentMesh*>(*it)->Modelmesh());
-        glPopMatrix();
-    }
 
-    glLoadIdentity();
+    //    int i = 0;
+    //    for(auto it=mComponents.begin(); it<mComponents.end(); ++it , ++i)
+    //    {
+    //        if(i == 10) continue;
 
-    //=================================================//
+    //        Matrix4 MultMatrix = (*it)->GetTransformMatrixHierarchy();
+
+    //        //-------------------------------------------------------------//
+    //        if(mSceneDscriptor.m_IsSimulateDynamics)
+    //        {
+    //            auto iter_proxy = mProxyColliderConnects.find((*it));
+    //            if(iter_proxy != mProxyColliderConnects.end())
+    //            {
+    //                MultMatrix = iter_proxy->second->GetWorldTransform().GetTransformMatrix();
+    //            }
+    //        }
+    //        //-------------------------------------------------------------//
+
+    //        glPushMatrix();
+    //        glMultMatrixf(MultMatrix);
+    //        glColor3f(0.5,0.5,0.5);
+    //        OpenGLRender::DrawComponentMeshFill(static_cast<IComponentMesh*>(*it)->Modelmesh());
+    //        glColor3f(1,1,1);
+    //        OpenGLRender::DrawComponentMeshLine(static_cast<IComponentMesh*>(*it)->Modelmesh());
+    //        glPopMatrix();
+    //    }
+
+    //    glLoadIdentity();
+
+    //    //=================================================//
 
     glFlush();
 }
@@ -820,6 +867,10 @@ void SceneEngineRobocar::update()
 //    }
 
 
+
+
+
+
     for(auto it=mComponents.begin(); it<mComponents.end(); ++it)
     {
         (*it)->Updatee();
@@ -828,23 +879,67 @@ void SceneEngineRobocar::update()
 
     if(mRoboCar)
     {
+
+
+
       if(m_IsDynamic_LQR)
       {
-        m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
-        if((m_EndPoint - m_PointS).LengthSquare() < 40.2 )
-        {
-            num++;
-            if( num%(int)mPoints.size() == 0 ) num = 0;
-            m_EndPoint = mPoints[num];
-        }
+//          m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
+//          if((m_EndPoint - m_PointS).LengthSquare() < 10 )
+//          {
+//              num++;
+//              if( num%(int)mPoints.size() == 0 ) num = 0;
+//              m_EndPoint = mPoints[num];
+//          }
 
-        mRoboCar->Update(mTimeStep,m_PointS);
-        mRoboCar->UpdateControlPointGuidance(m_PointS);
+          Vector3 p = mRoboCar->physBody_Base->GetTransform().GetPosition();
+          if( (p - m_PointS).Length() < 20 ) m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
+          if((m_EndPoint - m_PointS).LengthSquare() < 10 )
+          {
+              if(num < (int)mTrackerPoints.size() )
+              {
+                m_EndPoint = mTrackerPoints[num++];
+              }
+          }
+
+          mRoboCar->UpdateControlPointGuidance(m_PointS);
 
       }
       else
       {
-        mRoboCar->Stop();
+
+          if(m_IsTrackingMove)
+          {
+              Vector3 p = mRoboCar->physBody_Base->GetTransform().GetPosition();
+              if( (p - m_pickPoint).Length() > 20 )
+              {
+                  m_pickPoint = p;
+                  mTrackerPoints.push_back(m_pickPoint);
+              }
+          }
+
+
+          float coff = data_trransmission.kd;
+          mRoboCar->mVehicleRobot->setPos_motorA(data_trransmission.speed_PWM_X * coff);
+          mRoboCar->mVehicleRobot->setPos_motorB(data_trransmission.speed_PWM_X * coff);
+          mRoboCar->mVehicleRobot->setPos_motorC(data_trransmission.speed_PWM_X * coff);
+          mRoboCar->mVehicleRobot->setPos_motorD(data_trransmission.speed_PWM_X * coff);
+
+          //          Vector3 Dir = mRoboCar->physBody_Base->GetTransform().GetRotation() * Vector3::X;
+          //          mRoboCar->UpdateControlPointGuidance(m_PointS += data_trransmission.speed_PWM_X * Dir * coff * 0.01);
+
+          //qDebug() << data_trransmission.turn;
+          mRoboCar->mFixOrientation = Quaternion::FromAngleAxis( Vector3::Y , angle_yaw += data_trransmission.turn * 0.0001);
+        //mRoboCar->Stop();
+
+
+      }
+
+      if(m_IsFix == true)
+      {
+          qDebug() << "Stop";
+          mRoboCar->Stop();
+          m_IsFix = false;
       }
     }
 
@@ -852,19 +947,28 @@ void SceneEngineRobocar::update()
     if(mSceneDscriptor.m_IsSimulateDynamics)
     {
         mDynamicsWorld->UpdateFixedTimeStep(mTimeStep);
+        mRoboCar->Update(mTimeStep,m_PointS);
     }
 
 
+
+
     //--------------------------------------------------------------//
 
-    mGimbalStabilization->Update(mGimbalStabilization->mGimbalRoot->GetTransfom().GetRotation(),
-                                 NuzzleChoice->GetTransformHierarchy().GetPosition(),
-                                 mGimbalStabilization->mGimbalConnectB->GetTransformHierarchy().GetPosition());
+//    mGimbalStabilization->Update(mGimbalStabilization->mGimbalRoot->GetTransfom().GetRotation(),
+//                                 NuzzleChoice->GetTransformHierarchy().GetPosition(),
+//                                 mGimbalStabilization->mGimbalConnectB->GetTransformHierarchy().GetPosition());
 
 
-     m_AngleGimbal = mGimbalStabilization->mAngleGimbalStabilization;
+//     m_AngleGimbal = mGimbalStabilization->mAngleGimbalStabilization;
 
     //--------------------------------------------------------------//
+
+    if(keyDown(Qt::Key_2))
+    {
+       qDebug() << "Key_2";
+       mRoboCar->Stop();
+    }
 }
 
 void SceneEngineRobocar::resize(float width, float height)
@@ -1121,11 +1225,23 @@ void SceneEngineRobocar::keyboard(int key)
         //physBody_Target_4->setIsMove(false);
     }
 
+
 }
 
 void SceneEngineRobocar::destroy()
 {
+    mPoints.clear();
+    mTrackerPoints.clear();
+    mDynamicsWorld->Destroy();
 
+}
+
+void SceneEngineRobocar::Stop()
+{
+    if(mRoboCar)
+    {
+        mRoboCar->Stop();
+    }
 }
 
 //-----------------------------------------------------------//

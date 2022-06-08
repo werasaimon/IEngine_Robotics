@@ -80,6 +80,50 @@ scalar RobotSensors::getPos_motorD() const
 void VehicleRobotCar::UpdateControlPointGuidance(const Vector3 &target_position)
 {
     Vector3 p = physBody_Base->GetTransform().GetPosition();
+    Vector3 direction = Vector3::Clamp(p - target_position , 25);
+
+//    if(IMath::IAbs(IMath::Cross(p,target_position).LengthSquare()) < 0.0001 )
+//    {
+//        direction = Vector3::X;
+//    }
+
+    Vector3 eye_dir = physBody_Base->GetTransform().GetRotation() * Vector3::X;
+    Vector3 vel = physBody_Base->GetLinearVelocity();
+
+    scalar L = direction.Dot(eye_dir);
+    scalar V = vel.Dot(eye_dir);
+
+
+    const static float MIN_MAX = mDispatcherAttribute.extrem_MIN_MAX;
+    L = IMath::IClamp(L,-MIN_MAX,MIN_MAX);
+
+    float coff0 = mDispatcherAttribute.coffPosDeverative0;
+    float coff1 = mDispatcherAttribute.coffPosDeverative1;
+    float coff2 = mDispatcherAttribute.coffPosDeverative2;
+    mVehicleRobot->setPos_motorA((L * coff1 + V * coff2) * coff0);
+    mVehicleRobot->setPos_motorB((L * coff1 + V * coff2) * coff0);
+    mVehicleRobot->setPos_motorC((L * coff1 + V * coff2) * coff0);
+    mVehicleRobot->setPos_motorD((L * coff1 + V * coff2) * coff0);
+
+    if(direction.Length() > /*mDispatcherAttribute.minimal*/ 1 )
+    {
+        Vector3 dir = (target_position - p).Normalized();
+
+        mFixOrientation = (Quaternion::SlerpToVector(Vector3::X ,dir).GetConjugate());
+        if(IMath::IAbs(IMath::Cross(Vector3::X ,dir).LengthSquare()) < 0.0001 )
+        {
+          mFixOrientation = Quaternion::IDENTITY;
+        }
+
+
+        //        mRigidBodyVehicle->ApplyImpulseLinear( mOrientationSensor->Quaternione() * Vector3::X * -0.025f *
+        //                                               Vector3::Clamp(direction,1.0));
+    }
+}
+
+void VehicleRobotCar::UpdateControlPointGuidance2(const Vector3 &target_position)
+{
+    Vector3 p = physBody_Base->GetTransform().GetPosition();
     Vector3 direction = (p - target_position);
 
 //    if(IMath::IAbs(IMath::Cross(p,target_position).LengthSquare()) < 0.0001 )
@@ -105,22 +149,6 @@ void VehicleRobotCar::UpdateControlPointGuidance(const Vector3 &target_position)
     mVehicleRobot->setPos_motorC((L * coff1 + V * coff2) * coff0);
     mVehicleRobot->setPos_motorD((L * coff1 + V * coff2) * coff0);
 
-    if(direction.Length() > mDispatcherAttribute.minimal )
-    {
-        Vector3 dir = (target_position - p).Normalized();
-
-
-
-        mFixOrientation = (Quaternion::SlerpToVector(Vector3::X ,dir).GetConjugate());
-        if(IMath::IAbs(IMath::Cross(Vector3::X ,dir).LengthSquare()) < 0.0001 )
-        {
-          mFixOrientation = Quaternion::IDENTITY;
-        }
-
-
-        //        mRigidBodyVehicle->ApplyImpulseLinear( mOrientationSensor->Quaternione() * Vector3::X * -0.025f *
-        //                                               Vector3::Clamp(direction,1.0));
-    }
 }
 
 void VehicleRobotCar::Update(scalar _dt , const Vector3 &target_position)

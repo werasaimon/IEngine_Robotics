@@ -4,7 +4,10 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QMap>
+#include <QUdpSocket>
 #include "Engine/engine.hpp"
+#include "Scene/SceneEngineRobocar.h"
+
 
 
 namespace Ui {
@@ -22,8 +25,15 @@ public:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
+
+    DataPacketRemote data_trransmission;
+    QUdpSocket *m_socket;
+
+
 private slots:
+
     void Update();
+    void Updatee();
 
     void on_pushButton_Timer_clicked();
 
@@ -59,12 +69,23 @@ private slots:
 
     void on_pushButton_Clear_clicked();
 
-private:
+    void on_pushButton_StartUDP_clicked();
 
+    void readyRead();
+
+    void on_actionsave_tracking_triggered();
+
+    void on_actionopen_tracking_triggered();
+
+    void on_checkBox_TrackerMove_toggled(bool checked);
+
+    private:
 
     bool m_IsSimulatePhysics;
     bool m_IsTracking;
     bool m_ISPloter;
+
+    bool m_IsConnectUDP;
 
     // Порт обмена данными
     quint16 m_Port;
@@ -81,6 +102,7 @@ private:
 
     Ui::MainWindow *ui;
     QTimer *timer;
+    QTimer *timer2;
 };
 
 #endif // MAINWINDOW_H
