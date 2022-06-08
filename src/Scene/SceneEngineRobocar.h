@@ -199,6 +199,8 @@ public:
     Vector3 m_pickPoint;
 
 
+    float Max_Length;
+
 
 public:
     SceneEngineRobocar();

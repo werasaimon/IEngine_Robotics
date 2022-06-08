@@ -625,3 +625,9 @@ void MainWindow::on_checkBox_TrackerMove_toggled(bool checked)
     static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTrackingMove = checked;
 }
 
+
+void MainWindow::on_horizontalSlider_MaxLength_sliderMoved(int position)
+{
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->Max_Length = position;
+}
+

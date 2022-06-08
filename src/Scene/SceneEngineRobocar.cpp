@@ -189,6 +189,9 @@ void SceneEngineRobocar::initialization()
 {
     glClearColor(0.f,0.f,0.0f,1.f);
 
+
+    Max_Length = 25;
+
     m_PointS = Vector3::X * 5.f;
     m_IsDynamic_LQR = false;
     m_IsTrackingMove = false;
@@ -893,7 +896,11 @@ void SceneEngineRobocar::update()
 //          }
 
           Vector3 p = mRoboCar->physBody_Base->GetTransform().GetPosition();
-          if( (p - m_PointS).Length() < 20 ) m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
+          if( (p - m_PointS).Length() < Max_Length )
+          {
+              m_PointS += (m_EndPoint - m_PointS).Normalized() * 0.05 * speed_point;
+          }
+
           if((m_EndPoint - m_PointS).LengthSquare() < 10 )
           {
               if(num < (int)mTrackerPoints.size() )

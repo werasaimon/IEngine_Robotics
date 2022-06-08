@@ -79,6 +79,8 @@ private slots:
 
     void on_checkBox_TrackerMove_toggled(bool checked);
 
+    void on_horizontalSlider_MaxLength_sliderMoved(int position);
+
     private:
 
     bool m_IsSimulatePhysics;
