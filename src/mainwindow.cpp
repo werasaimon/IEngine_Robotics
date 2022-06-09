@@ -522,7 +522,8 @@ void MainWindow::on_actionsave_tracking_triggered()
    ui->widget->timer.stop();
 
 
-    QString filename = QFileDialog::getSaveFileName(nullptr, "test sav e name", ".", "Text files (*.txt);" );;
+   QString filter = "Worksheet Files (*.txt)";
+    QString filename = QFileDialog::getSaveFileName(nullptr, "test sav e name", ".", filter, &filter ) + ".txt";;
 //    QFile file(filename);
 //    if (file.open(QIODevice::ReadWrite))
 //    {
