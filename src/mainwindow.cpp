@@ -568,7 +568,8 @@ void MainWindow::on_actionopen_tracking_triggered()
 
         static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints.clear();
         static_cast<SceneEngineRobocar*>(ui->widget->scene())->num = 0;
-
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTrackingMove = false;
+        ui->checkBox_TrackerMove->setChecked(false);
 
         qDebug() << fileName;
         QTextStream in(&file);
