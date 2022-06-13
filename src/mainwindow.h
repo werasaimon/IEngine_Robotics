@@ -19,8 +19,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+   ~MainWindow();
 
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -81,7 +82,9 @@ private slots:
 
     void on_horizontalSlider_MaxLength_sliderMoved(int position);
 
-    private:
+    void on_pushButton_clicked();
+
+ private:
 
     bool m_IsSimulatePhysics;
     bool m_IsTracking;
@@ -104,7 +107,7 @@ private slots:
 
     Ui::MainWindow *ui;
     QTimer *timer;
-    QTimer *timer2;
+
 };
 
 #endif // MAINWINDOW_H

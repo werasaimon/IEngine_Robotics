@@ -6,6 +6,7 @@
 #include <QLabel>
 
 #include <QFileDialog>
+#include <QNetworkInterface>
 
 /**/
 struct Quaternionn
@@ -51,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("IEngine - Werasaimon");
 
     timer = new QTimer(this);
-    timer2 = new QTimer(this);
     m_socket = new QUdpSocket(this);
 
     connect(timer, SIGNAL(timeout()), this, SLOT(Update()));
@@ -422,7 +422,17 @@ void MainWindow::on_pushButton_StartUDP_clicked()
 {
     if(m_IsConnectUDP == false)
     {
-        bool result = m_socket->bind(QHostAddress("192.168.1.8"), m_Port);
+        QString IP_Addres;
+        const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+        for (const QHostAddress &address: QNetworkInterface::allAddresses())
+        {
+            if( address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost )
+            {
+                 IP_Addres = address.toString();
+            }
+        }
+
+        bool result = m_socket->bind(QHostAddress(IP_Addres) , m_Port);
         qDebug() << m_socket->localAddress() << m_socket->localPort();
 
         if(result)
@@ -632,4 +642,7 @@ void MainWindow::on_horizontalSlider_MaxLength_sliderMoved(int position)
 {
     static_cast<SceneEngineRobocar*>(ui->widget->scene())->Max_Length = position;
 }
+
+
+
 
