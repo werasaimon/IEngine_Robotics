@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/object.fsh</file>
+        <file>shaders/object.vsh</file>
+        <file>shaders/depth.fsh</file>
+        <file>shaders/depth.vsh</file>
+    </qresource>
+</RCC>
