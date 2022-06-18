@@ -12,7 +12,7 @@ This README would normally document whatever steps are necessary to get your app
 
 
 
-![alt text](https://github.com/werasaimon/DYNAMIC-RBOBOTICS-SYSTEMS/blob/main/data/img/demo.png?raw=true)
+![](https://github.com/werasaimon/DYNAMIC-RBOBOTICS-SYSTEMS/blob/main/data/img/demo.png)
 
 
 * Summary of set up
