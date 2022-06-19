@@ -82,7 +82,7 @@ private slots:
 
     void on_horizontalSlider_MaxLength_sliderMoved(int position);
 
-    void on_pushButton_clicked();
+
 
  private:
 
