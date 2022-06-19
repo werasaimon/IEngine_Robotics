@@ -8,27 +8,16 @@ This README would normally document whatever steps are necessary to get your app
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
 
+## Engine Robot-Simulate 
 
+Симулятор робота на основе физического симулятора законов физики [Физика - Ньютона] 
 
-![](https://github.com/werasaimon/DYNAMIC-RBOBOTICS-SYSTEMS/blob/main/data/img/demo.png)
+#Install SDL2 
 
+```bash
+# #install sdl2
+sudo apt-get install libsdl2-dev 
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+![bandicam 2020-07-31 03-50-36-209](https://github.com/werasaimon/IEngine_Robotics/blob/test/img/demo.png)
