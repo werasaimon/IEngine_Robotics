@@ -13,7 +13,7 @@ This README would normally document whatever steps are necessary to get your app
 
 Симулятор робота на основе физического симулятора законов физики [Физика - Ньютона] 
 
-#Install SDL2 
+# Install SDL2 
 
 ```bash
 # #install sdl2
