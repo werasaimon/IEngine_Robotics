@@ -72,6 +72,29 @@
             </widget>
            </item>
            <item alignment="Qt::AlignHCenter">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>Maximum distance LIDAR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_MAX_DISTANCE_LIDAR">
+             <property name="minimum">
+              <number>5</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>50</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item alignment="Qt::AlignHCenter">
             <widget class="QLabel" name="label">
              <property name="text">
               <string>Speed Tracking Move Point</string>

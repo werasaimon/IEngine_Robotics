@@ -3,8 +3,8 @@
 
 #include "SceneMain.h"
 
-#include "Scene/Sensors/OrientationSensor.h"
-#include "Scene/Sensors/EncoderSensor.h"
+#include "Scene/Sensors/ISensorOrientation.h"
+#include "Scene/Sensors/ISensorEncoder.h"
 #include "Engine/engine.hpp"
 
 #include "Engine/ICommon/IMemory/IList.h"
@@ -38,13 +38,17 @@
 #include "EngineComponent/IEngineComponent.hpp"
 #include "Shader/Shader.h"
 
-#include "Sensors/EncoderSensor.h"
-#include "Sensors/OrientationSensor.h"
-#include "Sensors/VehicleRobotCar.h"
+#include "Sensors/ISensorOrientation.h"
+#include "Sensors/ISensorEncoder.h"
+#include "Sensors/ISensorLIDAR.h"
+#include "Robotics/VehicleRobotCar.h"
 
 #include "IEngineGimbalStabilization.h"
-
 #include "IEngineFactory.h"
+
+#include "../fontprovider.h"
+
+
 
 using namespace IMath;
 using namespace IEngine;
@@ -82,8 +86,8 @@ struct DataPacketRemote
 };
 
 
-//-----------------------------------------//
 
+//----------------------------------------//
 
 struct SceneDscriptorr
 {
@@ -160,6 +164,9 @@ class SceneEngineRobocar : public SceneMain
 
     //----------------------------//
 
+
+
+
     //---------------- Manipulator -------------------//
     std::auto_ptr<IGizmoManipulator> mGizmoManipulator;
     std::set<int>                    mSelectedIndexIds;
@@ -172,6 +179,30 @@ class SceneEngineRobocar : public SceneMain
 
 
     //---------------------------//
+
+    scalar mAngleEyeLidar;
+    IComponentMesh *mBoxLidar;
+
+
+    struct PointLIDAR
+    {
+       PointLIDAR(float _distance , float _angle , Vector3 _point) :
+           distance(_distance) ,
+           angle(_angle),
+           point(_point)
+       {}
+
+       float distance;
+       float angle;
+       Vector3 point;
+    };
+
+    std::vector<PointLIDAR> mLiDARPoints;
+
+
+    FontProvider mFontProvider;
+    QOpenGLShaderProgram mProgramFont;
+
 
 
 public:
@@ -200,6 +231,9 @@ public:
 
 
     float Max_Length;
+    float MaxDistanceLIDAR = 50;
+
+
 
 
 public:

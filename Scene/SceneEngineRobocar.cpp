@@ -1,8 +1,15 @@
 #include "SceneEngineRobocar.h"
 #include "IEngineFactory.h"
 
+#include <GL/freeglut.h>
+
 #include "OpenGL/geometry_opengl.h"
 #include "OpenGL/OpenGLRender.h"
+
+#include <freetype2/ft2build.h>
+
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 
 #include <cmath>
 
@@ -11,6 +18,9 @@
 
 VehicleRobotCar *FactoryMethod::CretaeRobotCar()
 {
+
+    //--------------------------------------//
+
     MeshGenerator::CuboidDescriptor cuboid_dscp_down(Vector3(25.0,1.0,12.0));
     IComponentMesh *BoxDown = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down));
     BoxDown->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(0,0,0)));
@@ -185,9 +195,22 @@ void SceneEngineRobocar::initCamera()
     camera->InitTransform();
 }
 
+
+
 void SceneEngineRobocar::initialization()
 {
     glClearColor(0.f,0.f,0.0f,1.f);
+
+
+    //Font shaders
+    if (!mProgramFont.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vshaderFont30.glsl"))
+        qDebug() << "close()";
+    if (!mProgramFont.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fshaderFont30.glsl"))
+        qDebug() << "close()";
+    if (!mProgramFont.link())
+        qDebug() << "close()";
+
+    mFontProvider.initializeFontProvider();
 
 
     Max_Length = 25;
@@ -276,166 +299,6 @@ void SceneEngineRobocar::initialization()
             mRoboCar = mFactoryMethod->CreateRobot(RobotDescriptor(Vector3(25.0,1.0,12.0),4),init_transform);
 
 
-
-//            auto tt = mRoboCar->physBody_Base->GetTransform();
-//            tt.SetPosition(m_EndPoint);
-//            mRoboCar->physBody_Base->SetCenterOfMassWorld(m_EndPoint);
-
-            //--------------------------------------//
-
-
-            //            //--------------------------------------//
-
-
-            //            MeshGenerator::CuboidDescriptor cuboid_dscp_down(Vector3(25.0,1.0,12.0));
-            //            IComponentMesh *BoxDown = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down));
-            //            BoxDown->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(0,0,0)));
-            //            mComponents.push_back(BoxDown);
-
-            //            Transform transform_4 = BoxDown->GetTransformMatrixHierarchy();
-            //            transform_4.SetPosition(Vector3(0,0,0));
-            //            IRigidBody* physBody_Target_4 = mDynamicsWorld->CreateRigidBody(transform_4);
-
-            //            Transform trans = Transform::Identity();
-            //            trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 1.5f);
-            //            IProxyShape* proxy_sphere_4 = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(25.0,1.0,10.0)),1.f,trans);
-            //            AddPhysicsProxyInModel(BoxDown,proxy_sphere_4);
-
-
-            //            float s = -1.5;
-
-            //            //--------------------------------------//
-
-            //            MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_0(Vector3(4));
-            //            IMesh *Mesh_Wheel_0 = new IMeshGenerate(sphere_dscp_wheel_0);
-            //            IComponentMesh *Wheel_0 = new IComponentMesh(Mesh_Wheel_0);
-            //            Wheel_0->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(10,0,10)));
-            //            mComponents.push_back(Wheel_0);
-
-            //            Transform transform_0 = Mesh_Wheel_0->GetTransformMatrixHierarchy();
-            //            transform_0.SetPosition(Vector3(10,s,10) + physBody_Target_4->CenterOfMassWorld());
-            //            IRigidBody* physBody_Wheel_0 = mDynamicsWorld->CreateRigidBody(transform_0);
-            //            IProxyShape* proxy_sphere_0 = physBody_Wheel_0->AddCollisionShape(new ICollisionShapeSphere(4),1.f);
-            //            AddPhysicsProxyInModel(Wheel_0,proxy_sphere_0);
-            //            physBody_Wheel_0->SetType(BodyType::DYNAMIC);
-
-            //            //--------------------------------------//
-
-            //            MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_1(Vector3(4));
-            //            IMesh *Mesh_Wheel_1 = new IMeshGenerate(sphere_dscp_wheel_1);
-            //            IComponentMesh *Wheel_1 = new IComponentMesh(Mesh_Wheel_1);
-            //            Wheel_1->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(-10,0,10)));
-            //            mComponents.push_back(Wheel_1);
-
-            //            Transform transform_1 = Mesh_Wheel_1->GetTransformMatrixHierarchy();
-            //            transform_1.SetPosition(Vector3(-10,s,10) + physBody_Target_4->CenterOfMassWorld());
-            //            IRigidBody* physBody_Wheel_1 = mDynamicsWorld->CreateRigidBody(transform_1);
-            //            IProxyShape* proxy_sphere_1 = physBody_Wheel_1->AddCollisionShape(new ICollisionShapeSphere(4),1.f);
-            //            AddPhysicsProxyInModel(Wheel_1,proxy_sphere_1);
-            //            physBody_Wheel_1->SetType(BodyType::DYNAMIC);
-
-            //            //--------------------------------------//
-
-            //            MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_2(Vector3(4));
-            //            IMesh *Mesh_Wheel_2 = new IMeshGenerate(sphere_dscp_wheel_2);
-            //            IComponentMesh *Wheel_2 = new IComponentMesh(Mesh_Wheel_2);
-            //            Wheel_2->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(10,0,-10.0)));
-            //            mComponents.push_back(Wheel_2);
-
-            //            Transform transform_2 = Mesh_Wheel_2->GetTransformMatrixHierarchy();
-            //            transform_2.SetPosition(Vector3(10,s,-10) + physBody_Target_4->CenterOfMassWorld());
-            //            IRigidBody* physBody_Wheel_2 = mDynamicsWorld->CreateRigidBody(transform_2);
-            //            IProxyShape* proxy_sphere_2 = physBody_Wheel_2->AddCollisionShape(new ICollisionShapeSphere(4),1.f);
-            //            AddPhysicsProxyInModel(Wheel_2,proxy_sphere_2);
-            //            physBody_Wheel_2->SetType(BodyType::DYNAMIC);
-
-            //            //--------------------------------------//
-
-            //            MeshGenerator::EllipsoidDescriptor sphere_dscp_wheel_3(Vector3(4));
-            //            IMesh *Mesh_Wheel_3 = new IMeshGenerate(sphere_dscp_wheel_3);
-            //            IComponentMesh *Wheel_3 = new IComponentMesh(Mesh_Wheel_3);
-            //            Wheel_3->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(-10,0,-10.0)));
-            //            mComponents.push_back(Wheel_3);
-
-            //            Transform transform_3 = Mesh_Wheel_3->GetTransformMatrixHierarchy();
-            //            transform_3.SetPosition(Vector3(-10,s,-10)+ physBody_Target_4->CenterOfMassWorld());
-            //            IRigidBody* physBody_Wheel_3 = mDynamicsWorld->CreateRigidBody(transform_3);
-            //            IProxyShape* proxy_sphere_3 = physBody_Wheel_3->AddCollisionShape(new ICollisionShapeSphere(4),1.f);
-            //            AddPhysicsProxyInModel(Wheel_3,proxy_sphere_3);
-            //            physBody_Wheel_3->SetType(BodyType::DYNAMIC);
-
-
-            //            IPhysicsMaterial phys_material;
-            //            phys_material.SetBounciness(0.0);
-            //            phys_material.SetFrictionCoefficient(0.5f);
-            //            phys_material.SetRollingResistance(0.01);
-
-
-            //            //            IPhysicsMaterial phys_material2;
-            //            //            phys_material2.SetBounciness(0.0);
-            //            //            phys_material2.SetFrictionCoefficient(0.04f);
-            //            //            phys_material2.SetRollingResistance(0.0);
-
-            //            physBody_Wheel_0->SetMaterial(phys_material);
-            //            physBody_Wheel_1->SetMaterial(phys_material);
-            //            physBody_Wheel_2->SetMaterial(phys_material);
-            //            physBody_Wheel_3->SetMaterial(phys_material);
-            //            physBody_Target_4->SetMaterial(phys_material);
-
-
-            //            mDynamicsWorld->addNoCollisionPair(physBody_Wheel_0,physBody_Target_4);
-            //            mDynamicsWorld->addNoCollisionPair(physBody_Wheel_1,physBody_Target_4);
-            //            mDynamicsWorld->addNoCollisionPair(physBody_Wheel_2,physBody_Target_4);
-            //            mDynamicsWorld->addNoCollisionPair(physBody_Wheel_3,physBody_Target_4);
-
-            //            //--------------------------------------//
-
-
-            //            physBody_Target_4->SetCenterOfMassWorld( physBody_Target_4->CenterOfMassWorld() + Vector3::Y * s );
-
-            ////            //IHingeJointInfo(physBody_Target_4,physBody_Wheel_0,transform_0.GetPosition(),Vector3::X);
-            ////            //float s = 0;
-            //            IHingeJointInfo HingeJointInfoWheel0(physBody_Wheel_0,physBody_Target_4,transform_0.GetPosition(),Vector3::Z);
-            //            IHingeJointInfo HingeJointInfoWheel1(physBody_Wheel_1,physBody_Target_4,transform_1.GetPosition(),Vector3::Z);
-            //            IHingeJointInfo HingeJointInfoWheel2(physBody_Wheel_2,physBody_Target_4,transform_2.GetPosition(),Vector3::Z);
-            //            IHingeJointInfo HingeJointInfoWheel3(physBody_Wheel_3,physBody_Target_4,transform_3.GetPosition(),Vector3::Z);
-
-            //            HingeJointInfoWheel0.isMotorEnabled = true;
-            //            HingeJointInfoWheel1.isMotorEnabled = true;
-            //            HingeJointInfoWheel2.isMotorEnabled = true;
-            //            HingeJointInfoWheel3.isMotorEnabled = true;
-
-            //            IHingeJoint* Wheel_HingeJoint0 = static_cast<IHingeJoint*>(mDynamicsWorld->CreateJoint(HingeJointInfoWheel0));
-            //            IHingeJoint* Wheel_HingeJoint1 = static_cast<IHingeJoint*>(mDynamicsWorld->CreateJoint(HingeJointInfoWheel1));
-            //            IHingeJoint* Wheel_HingeJoint2 = static_cast<IHingeJoint*>(mDynamicsWorld->CreateJoint(HingeJointInfoWheel2));
-            //            IHingeJoint* Wheel_HingeJoint3 = static_cast<IHingeJoint*>(mDynamicsWorld->CreateJoint(HingeJointInfoWheel3));
-
-            //            Wheel_HingeJoint0->EnableMotor(true);
-            //            Wheel_HingeJoint1->EnableMotor(true);
-            //            Wheel_HingeJoint2->EnableMotor(true);
-            //            Wheel_HingeJoint3->EnableMotor(true);
-
-            //            Wheel_HingeJoint0->SetMaxMotorTorque(500);
-            //            Wheel_HingeJoint1->SetMaxMotorTorque(500);
-            //            Wheel_HingeJoint2->SetMaxMotorTorque(500);
-            //            Wheel_HingeJoint3->SetMaxMotorTorque(500);
-
-
-            //            mRoboCar = new VehicleRobotCar(physBody_Target_4,
-            //            physBody_Wheel_0,
-            //            physBody_Wheel_1,
-            //            physBody_Wheel_2,
-            //            physBody_Wheel_3,
-            //            Wheel_HingeJoint0,
-            //            Wheel_HingeJoint1,
-            //            Wheel_HingeJoint2,
-            //            Wheel_HingeJoint3);
-
-            ////            Transform t;
-            ////            t.SetBasis(Matrix3::CreateRotationAxis(Vector3::Y,M_PI * 4.0));
-            ////            t.SetPosition(Vector3::Y * 8 + m_EndPoint);
-            ////            mRoboCar->AddTransform(t);
-
             //--------------------------------------//
 
             MeshGenerator::CuboidDescriptor cuboid_dscp(Vector3(500.0,5.0,500.0));
@@ -462,87 +325,19 @@ void SceneEngineRobocar::initialization()
 
             //-------------------------------------//
 
-
-//            MeshGenerator::CuboidDescriptor cuboid_dscp_down_t(Vector3(5.0,5.0,5.0));
-//            IComponentMesh *BoxDown_t = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down_t));
-//            Transform transform_t = physBody_Target_4->GetTransform();
-//            transform_t.SetPosition(Vector3(0,4,0));
-//            BoxDown_t->SetTransform(transform_t);
-//            mComponents.push_back(BoxDown_t);
+            MeshGenerator::CuboidDescriptor cuboid_lidar(Vector3(5.0,5.0,5.0));
+            mBoxLidar = new IComponentMesh(new IMeshGenerate(cuboid_lidar));
+            mBoxLidar->SetTransformMatrix(Matrix4::CreateTranslation(Vector3(0,0,0)));
+            mComponents.push_back(mBoxLidar);
 
 
-
-
-//            mGimbalStabilization = new IEngineGimbalStabilization();
-//            mComponents.push_back(mGimbalStabilization->mGimbalRoot);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectA);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectB);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectC);
-
-
-//            Transform transform_s = transform_t;
-//           // transform_s.SetPosition(Vector3::Y * -20.f);
-//            IRigidBody *physBody_s = mDynamicsWorld->CreateRigidBody(transform_s);
-//            IProxyShape* proxy_s = physBody_s->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),10.f);
-//            AddPhysicsProxyInModel(mGimbalStabilization->mGimbalRoot,proxy_s);
-//            physBody_s->SetType(BodyType::DYNAMIC);
-
-
-//            trans = Transform::Identity();
-//            trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 4.5f);
-//            IProxyShape* proxy_sphere_t = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f,trans);
-//            AddPhysicsProxyInModel(BoxDown,proxy_sphere_t);
-
-//            physBody_Target_4->SetType(BodyType::DYNAMIC);
-            //physBody_Target_4->SetCenterOfMassWorld( trans.GetPosition() + Vector3::Y );
-
-
-
-//            IFixedJointInfo FixedJointInfo(physBody_s,physBody_Target_4,physBody_s->CenterOfMassWorld() - Vector3::Y * -3.f);
-//            IFixedJoint* FixedJoint0 = static_cast<IFixedJoint*>(mDynamicsWorld->CreateJoint(FixedJointInfo));
-
-
-
-            //----------------------------------------------------------//
-
-
-//            mGimbalStabilization = new IEngineGimbalStabilization();
-//            mComponents.push_back(mGimbalStabilization->mGimbalRoot);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectA);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectB);
-//            mComponents.push_back(mGimbalStabilization->mGimbalConnectC);
-
-            //mGimbalStabilization->mGimbalRoot->SetTransform(BoxDown->GetTransfom());
-            //BoxDown->AddChild(mGimbalStabilization->mGimbalRoot);
-
-//            Transform transform_5 = physBody_Target_4->GetTransform();
-//            transform_5.SetPosition( transform_5.GetPosition() + transform_5.GetBasis() * Vector3::Y * 3.f );
-//            IProxyShape* proxy_sphere_5 = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f,transform_5);
-//            AddPhysicsProxyInModel(mGimbalStabilization->mGimbalRoot,proxy_sphere_5);
-
-        //            MeshGenerator::CuboidDescriptor cuboid_dscp_down_t(Vector3(5.0,5.0,5.0));
-        //            IComponentMesh *BoxDown_t = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down_t));
-        //            Transform transform_t = physBody_Target_4->GetTransform();
-        //            transform_4.SetPosition(Vector3(0,0,0));
-        //            BoxDown_t->SetTransform(transform_t);
-        //            mComponents.push_back(BoxDown_t);
-
-
-        //            trans.SetPosition( trans.GetPosition() + trans.GetBasis() * Vector3::Y * 3.f);
-        //            IProxyShape* proxy_sphere_t = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f,trans);
-        //            AddPhysicsProxyInModel(BoxDown_t,proxy_sphere_t);
-
-            //IProxyShape* proxy_sphere_5 = physBody_Target_4->AddCollisionShape(new ICollisionShapeBox(Vector3(5.0,5.0,5.0)),1.f);
-            //AddPhysicsProxyInModel(BoxDown_t,proxy_sphere_5);
-
-
-
-        //            physBody_Target_4->SetType(BodyType::DYNAMIC);
-        //            physBody_Target_4->setIsMove(false);
+            //RaycastingCallback = new  IRaycastCallbackInformer();
 
             //--------------------------------------//
 
             m_PointS = mRoboCar->physBody_Base->GetTransform().GetPosition();
+
+            //-------------------------------------//
 
 
 }
@@ -611,29 +406,6 @@ void SceneEngineRobocar::render(float FrameTime)
     }
 
 
-//    for( const auto &it : mPoints )
-//    {
-//        glPushMatrix();
-//        glColor3f(1,0,0);
-//        GLUquadric *quad;
-//        quad = gluNewQuadric();
-//        glTranslatef(it.x,it.y,it.z);
-//        gluSphere(quad,0.4,100,20);
-//        glPopMatrix();
-//    }
-
-
-//    for( int i=0; i < (int)mPoints.size(); ++i )
-//    {
-//        glPushMatrix();
-//        glColor3f(0,1,0);
-//        glLineWidth(3);
-//        glBegin(GL_LINES);
-//        glVertex3fv(mPoints[i]);
-//        glVertex3fv(mPoints[((i+1)%mPoints.size() != 0)? i+1 : 0]);
-//        glEnd();
-//        glPopMatrix();
-//    }
 
     //===========================================//
 
@@ -668,16 +440,85 @@ void SceneEngineRobocar::render(float FrameTime)
 //    glEnd();
 //    glPopMatrix();
 
-//    if(mSceneDscriptor.m_IsSimulateDynamics)
-//    {
-//        if(mRoboCar->physBody_Base)
-//        {
-//            Transform t = mRoboCar->physBody_Base->GetTransform();
-//            t.SetPosition( t.GetPosition() + t.GetBasis() * Vector3::Y * 6.f);
-//            mGimbalStabilization->mGimbalRoot->SetTransform(t);
 
-//        }
-//    }
+     float distance;
+     float angle;
+
+    if(mSceneDscriptor.m_IsSimulateDynamics)
+    {
+        if(mRoboCar->physBody_Base)
+        {
+//            Transform t = mRoboCar->physBody_Base->GetTransform();
+//            t.SetPosition( t.GetPosition() + t.GetBasis() * Vector3::Y * 9.f);
+//            t.SetBasis( Matrix3::CreateRotationAxis(Vector3::Y, mAngleEyeLidar += 0.1f ));
+//            mBoxLidar->SetTransform(t);
+
+            Transform rot( Vector3::ZERO, Matrix3::CreateRotationAxis(Vector3::Y, mAngleEyeLidar += 0.1f ));
+            Transform shift(Vector3::Y * 8, Matrix3::IDENTITY);
+            Transform t = mRoboCar->physBody_Base->GetTransform() * shift * rot;
+            mBoxLidar->SetTransform(t);
+
+            //t.SetBasis( mRoboCar->physBody_Base->GetTransform().GetBasis().GetInverse() * t.GetBasis());
+
+
+
+            qDebug() << MaxDistanceLIDAR;
+
+            ISensorLIDAR mSensorLidare( mDynamicsWorld , /*mRoboCar->physBody_Base->GetTransform().GetBasis() **/ (Vector3::X + Vector3::Y * -0.1f) , t);
+            distance = mSensorLidare.CalculateDistance(MaxDistanceLIDAR);
+            angle = mSensorLidare.LAngleRotation(t.GetBasis() * Vector3::Y);
+            angle = IMath::IRadiansToDegrees(-angle + M_PI);
+
+            // qDebug() << "Angle: " << angle;// + 180 * IMath::ISign(angle);
+
+            if( 350 > angle )
+            {
+                qDebug() << "Angle: " << angle;
+                mLiDARPoints.push_back(PointLIDAR(distance,angle,t.GetPosition() + mSensorLidare.WorldDirection() * distance));
+            }
+            else if(!mLiDARPoints.empty())
+            {
+               mLiDARPoints.clear();
+               qDebug() << "Clear";
+            }
+
+
+
+            auto p1 = t.GetPosition();
+            auto p2 = t.GetPosition() + mSensorLidare.WorldDirection() * distance;
+
+            glPushMatrix();
+            glColor3f(0,1,0);
+            glLineWidth(3);
+            glBegin(GL_LINES);
+            glVertex3fv( p1 );
+            glVertex3fv( p2 );
+            glEnd();
+            glPopMatrix();
+
+            glPushMatrix();
+            glColor3f(1,0,0);
+            GLUquadric *quad;
+            quad = gluNewQuadric();
+            glTranslatef(p2.x,p2.y,p2.z);
+            gluSphere(quad,0.4,100,20);
+            glPopMatrix();
+        }
+
+
+        for(unsigned int ii = 0; ii < mLiDARPoints.size(); ii++)
+        {
+            Vector3 p = mLiDARPoints[ii].point;
+            glPushMatrix();
+            glColor3f(1,0,0);
+            GLUquadric *quad;
+            quad = gluNewQuadric();
+            glTranslatef(p.x,p.y,p.z);
+            gluSphere(quad,0.4,100,20);
+            glPopMatrix();
+
+        }
+    }
 
 
 
@@ -705,134 +546,159 @@ void SceneEngineRobocar::render(float FrameTime)
         glPopMatrix();
     }
 
+
     glLoadIdentity();
 
    //=================================================//
+
+
+  //    glDisable(GL_DEPTH_TEST);
+  //    glDisable(GL_LIGHTING);
+  //    glEnable(GL_BLEND);
+  //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  //    glDisable(GL_CULL_FACE);
+
+      glClearColor(0, 0, 0, 0);
+     //
+      glCullFace(GL_BACK);
+      glEnable(GL_DEPTH_TEST);
+      glEnable(GL_SCISSOR_TEST);
+      glEnable(GL_STENCIL_TEST);
+      glViewport(0,mHeight - mHeight/4, mWidth/4,mHeight/4);
+      glScissor(0,mHeight - mHeight/4,mWidth/4,mHeight/4);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      //
+      glLoadIdentity();
+
+
+//      auto b = mRoboCar->physBody_Base->GetTransform().GetBasis();
+//      float shift_angle = Vector3::AngleSigned(Vector3::X , b * Vector3::X, b * Vector3::Y);
+
+
+
+
+
+      char buff[255] = {0};
+      sprintf(buff , "LIDAR DISTANCE : %f" , distance);
+
+      QVector4D fontColor(1.0f, 0.0f, 0.0f, 1.0f);
+      mProgramFont.bind();
+
+      QMatrix4x4 modelMatrix;
+      modelMatrix.setToIdentity();
+
+      QMatrix4x4 OrthoProjectionMatrix;
+      OrthoProjectionMatrix.ortho(0,100,0,100,-1,1);
+
+      mProgramFont.setUniformValue("mvp_matrix", OrthoProjectionMatrix * modelMatrix);
+      mProgramFont.setUniformValue("textColor", fontColor);
+      mProgramFont.setUniformValue("text", 0);
+      QString stringToDisplay = QString::fromUtf8(buff);
+      mFontProvider.drawFontGeometry(&mProgramFont,1.0f, 90.0f, stringToDisplay, 0.1f);
+      mProgramFont.release();
+
+
+      float World_SIZE = 1;
+
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+
+      glOrtho(-World_SIZE, World_SIZE, -World_SIZE, World_SIZE, -1.0, 1.0);
+      glMatrixMode(GL_MODELVIEW);
+
+      glColor3f(0.0f, 1.0f, 0.0f);
+
+      glPushMatrix();
+      glLineWidth(4);
+      glutWireCube(World_SIZE * 2.0);
+      glLineWidth(1);
+      glPopMatrix();
+
+
+      glColor3f(1.0f, 0.0f, 0.0f);
+
+      glPushMatrix();
+      glPointSize(4);
+      glBegin(GL_POINTS);
+      for(unsigned int ii = 0; ii < mLiDARPoints.size(); ii++)
+      {
+          float theta = IMath::IDegreesToRadians( mLiDARPoints[ii].angle );
+          float radius = mLiDARPoints[ii].distance / 100;
+
+          float x = radius * sinf(theta);//calculate the x component
+          float y = radius * cosf(theta);//calculate the y component
+
+          auto v = /*mRoboCar->physBody_Base->GetTransform().GetBasis() **/ Vector3(x,y,0);
+
+          glVertex2f(v.x,v.y);//output verte
+
+      }
+      glEnd();
+      glPopMatrix();
+
+
+      glPushMatrix();
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glPointSize(4);
+      glBegin(GL_LINES);
+
+      Vector2 prev_point;
+      for(unsigned int ii = 0; ii < mLiDARPoints.size(); ii++)
+      {
+          float theta = IMath::IDegreesToRadians( mLiDARPoints[ii].angle );
+          float radius = mLiDARPoints[ii].distance / 100;
+
+          float x = radius * sinf(theta);//calculate the x component
+          float y = radius * cosf(theta);//calculate the y component
+
+          if(ii > 0)
+          {
+             glVertex2f(x,y);//output vertex
+             glVertex2f(prev_point.x,prev_point.y);//output vertex
+          }
+
+          prev_point = Vector2(x,y);
+      }
+      glEnd();
+      glPopMatrix();
+
+
+      glLoadIdentity();
 
 
     //=================================================//
 
-    //glCullFace(GL_BACK);
-    glCullFace(GL_FRONT);
-    glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, mWidth, mHeight);
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    //glCullFace(GL_BACK);
+//    glCullFace(GL_FRONT);
+//    glEnable(GL_DEPTH_TEST);
+//    glViewport(0, 0, mWidth, mHeight);
+//    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glLoadIdentity();
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(mCamera->getCamera2().ProjectionMatrix());
+//    glLoadIdentity();
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadMatrixf(mCamera->getCamera2().ProjectionMatrix());
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(mCamera->getCamera2().ViewMatrix());
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadMatrixf(mCamera->getCamera2().ViewMatrix());
 
-    if (mGizmoManipulator->GetGizmo())
-    {
-        mGizmoManipulator->GetGizmo()->SetCameraMatrix( mCamera->getCamera2().ViewMatrix() ,
-                                                        mCamera->getCamera2().ProjectionMatrix() );
+//    if (mGizmoManipulator->GetGizmo())
+//    {
+//        mGizmoManipulator->GetGizmo()->SetCameraMatrix( mCamera->getCamera2().ViewMatrix() ,
+//                                                        mCamera->getCamera2().ProjectionMatrix() );
 
-        if(mGizmoManipulator->mSelectedIndexID >= 0)
-        {
-            glLineWidth(5);
-            mGizmoManipulator->GetGizmo()->Draw();
-            glLineWidth(1);
-        }
-    }
+//        if(mGizmoManipulator->mSelectedIndexID >= 0)
+//        {
+//            glLineWidth(5);
+//            mGizmoManipulator->GetGizmo()->Draw();
+//            glLineWidth(1);
+//        }
+//    }
 
-    glLoadIdentity();
+//    glLoadIdentity();
 
-
-
-   //=================================================//
-
-
-  // glFlush();
-
-//    glClearIndex(1);
-
-    //-----------------------------//
-
-//    glDisable(GL_DEPTH_TEST);
-//    glDisable(GL_LIGHTING);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-//    glDisable(GL_CULL_FACE);
-
-
-
-    //    glClearColor(0, 0, 0, 0);
-
-    //   //-------------------------------//
-    //    glCullFace(GL_BACK);
-    //    glEnable(GL_DEPTH_TEST);
-    //    glEnable(GL_SCISSOR_TEST);
-    //    glEnable(GL_STENCIL_TEST);
-    //    glViewport(0,mHeight - mHeight/4, mWidth/4,mHeight/4);
-    //    glScissor(0,mHeight - mHeight/4,mWidth/4,mHeight/4);
-    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //    //
-
-
-    //    glLoadIdentity();
-    //    glMatrixMode(GL_PROJECTION);
-    //    glLoadMatrixf(mCamera->getCamera2().ProjectionMatrix());
-
-    //    glMatrixMode(GL_MODELVIEW);
-
-
-
-    //    /**
-    //    Vector3 Translation =
-    //           Vector3(0,0,4) * mGimbalStabilization->mGimbalConnectC->GetTransformMatrixHierarchy();
-    //    Quaternion RotationConj = Quaternion::LookAtRH( Translation ,
-    //                                                    NuzzleChoice->GetTransformMatrix().GetTranslation() ,
-    //                                                    Vector3::Y );
-
-
-    //    Matrix4 TransformMatrix;
-    //    TransformMatrix.SetToIdentity();
-    //    TransformMatrix.Rotate(RotationConj.GetConjugate());
-    //    TransformMatrix.Translate(-Translation);
-
-    //    glLoadMatrixf(TransformMatrix);
-    //    **/
-
-    //    Transform T = mGimbalStabilization->mGimbalConnectC->GetTransformHierarchy().GetInverse();
-    //    glLoadMatrixf(T.GetTransformMatrix());
-
-
-    //    int i = 0;
-    //    for(auto it=mComponents.begin(); it<mComponents.end(); ++it , ++i)
-    //    {
-    //        if(i == 10) continue;
-
-    //        Matrix4 MultMatrix = (*it)->GetTransformMatrixHierarchy();
-
-    //        //-------------------------------------------------------------//
-    //        if(mSceneDscriptor.m_IsSimulateDynamics)
-    //        {
-    //            auto iter_proxy = mProxyColliderConnects.find((*it));
-    //            if(iter_proxy != mProxyColliderConnects.end())
-    //            {
-    //                MultMatrix = iter_proxy->second->GetWorldTransform().GetTransformMatrix();
-    //            }
-    //        }
-    //        //-------------------------------------------------------------//
-
-    //        glPushMatrix();
-    //        glMultMatrixf(MultMatrix);
-    //        glColor3f(0.5,0.5,0.5);
-    //        OpenGLRender::DrawComponentMeshFill(static_cast<IComponentMesh*>(*it)->Modelmesh());
-    //        glColor3f(1,1,1);
-    //        OpenGLRender::DrawComponentMeshLine(static_cast<IComponentMesh*>(*it)->Modelmesh());
-    //        glPopMatrix();
-    //    }
-
-    //    glLoadIdentity();
-
-    //    //=================================================//
 
     glFlush();
 }
@@ -957,17 +823,6 @@ void SceneEngineRobocar::update()
         mRoboCar->Update(mTimeStep,m_PointS);
     }
 
-
-
-
-    //--------------------------------------------------------------//
-
-//    mGimbalStabilization->Update(mGimbalStabilization->mGimbalRoot->GetTransfom().GetRotation(),
-//                                 NuzzleChoice->GetTransformHierarchy().GetPosition(),
-//                                 mGimbalStabilization->mGimbalConnectB->GetTransformHierarchy().GetPosition());
-
-
-//     m_AngleGimbal = mGimbalStabilization->mAngleGimbalStabilization;
 
     //--------------------------------------------------------------//
 
@@ -1215,7 +1070,7 @@ void SceneEngineRobocar::keyboard(int key)
 
     if(key == Qt::Key_Z)
     {
-        MeshGenerator::CuboidDescriptor cuboid_dscp_down(Vector3(2.0,2.0,2.0));
+        MeshGenerator::CuboidDescriptor cuboid_dscp_down(Vector3(10.0,10.0,10.0));
         IComponentMesh *BoxDown = new IComponentMesh(new IMeshGenerate(cuboid_dscp_down));
         Transform transform_4 = Transform::Identity();
         transform_4.SetPosition(Vector3(rand()%250,10,rand()%250));
@@ -1226,7 +1081,7 @@ void SceneEngineRobocar::keyboard(int key)
         IRigidBody* physBody_Targ = mDynamicsWorld->CreateRigidBody(transform_4);
 
         Transform trans = Transform::Identity();
-        IProxyShape* proxy_sphere_4 = physBody_Targ->AddCollisionShape(new ICollisionShapeBox(Vector3(2.0,2.0,2.0)),1.f,trans);
+        IProxyShape* proxy_sphere_4 = physBody_Targ->AddCollisionShape(new ICollisionShapeBox(cuboid_dscp_down.size),1.f,trans);
         AddPhysicsProxyInModel(BoxDown,proxy_sphere_4);
         physBody_Targ->SetType(BodyType::DYNAMIC);
         //physBody_Target_4->setIsMove(false);
@@ -1252,5 +1107,8 @@ void SceneEngineRobocar::Stop()
 }
 
 //-----------------------------------------------------------//
+
+
+
 
 

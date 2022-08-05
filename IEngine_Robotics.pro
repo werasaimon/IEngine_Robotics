@@ -1,4 +1,4 @@
-QT += core gui network
+QT += core gui network opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -11,6 +11,18 @@ CONFIG += resources_big
 
 DEFINES += ENABLE_STL_SUPPORT
 
+INCLUDEPATH += /usr/include/freetype2/
+DEPENDPATH += /usr/include/freetype2/
+
+LIBS += -lfreetype
+
+win32: LIBS += -L$$PWD/freetype/ -lfreetype
+
+INCLUDEPATH += $$PWD/freetype/include
+DEPENDPATH += $$PWD/freetype/include
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/freetype/freetype.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/freetype/libfreetype.a
 
 #"При проведении обыска или осмотра жилья или иного владения лица,
 #обыска лица, если привлечение понятых объективно невозможно или
@@ -31,7 +43,8 @@ linux: {
 
 #Linux default
  !android: {
-   LIBS += -lGL -lGLU #-lglut #-lGLEW
+   LIBS += -lGL -lGLU -lglut #-lGLEW
+   LIBS += -lfreetype
 }
 
 }
@@ -143,13 +156,15 @@ SOURCES += \
     GLWidget.cpp \
     Scene/IEngineFactory.cpp \
     Scene/IEngineGimbalStabilization.cpp \
+    Scene/Robotics/VehicleRobotCar.cpp \
     Scene/SceneEngineNozzle.cpp \
     Scene/SceneEngineNuzzleGimbal.cpp \
     Scene/SceneEngineRobocar.cpp \
     Scene/SceneEngineTest.cpp \
-    Scene/Sensors/EncoderSensor.cpp \
-    Scene/Sensors/OrientationSensor.cpp \
-    Scene/Sensors/VehicleRobotCar.cpp \
+    Scene/Sensors/ISensorEncoder.cpp \
+    Scene/Sensors/ISensorLIDAR.cpp \
+    Scene/Sensors/ISensorOrientation.cpp \
+    fontprovider.cpp \
     main.cpp \
     mainwindow.cpp \
     Scene/IGizmo/IGizmoTransformMove.cpp \
@@ -289,13 +304,15 @@ HEADERS += \
     GLWidget.h \
     Scene/IEngineFactory.h \
     Scene/IEngineGimbalStabilization.h \
+    Scene/Robotics/VehicleRobotCar.h \
     Scene/SceneEngineNozzle.h \
     Scene/SceneEngineNuzzleGimbal.h \
     Scene/SceneEngineRobocar.h \
     Scene/SceneEngineTest.h \
-    Scene/Sensors/EncoderSensor.h \
-    Scene/Sensors/OrientationSensor.h \
-    Scene/Sensors/VehicleRobotCar.h \
+    Scene/Sensors/ISensorEncoder.h \
+    Scene/Sensors/ISensorLIDAR.h \
+    Scene/Sensors/ISensorOrientation.h \
+    fontprovider.h \
     mainwindow.h \
     Scene/IGizmo/IGizmoTransform.h \
     Scene/IGizmo/IGizmoTransformMove.h \
@@ -323,4 +340,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
 
 RESOURCES += \
+    fonts.qrc \
     shaders.qrc

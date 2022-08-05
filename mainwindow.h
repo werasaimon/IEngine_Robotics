@@ -84,7 +84,9 @@ private slots:
 
 
 
- private:
+    void on_horizontalSlider_MAX_DISTANCE_LIDAR_sliderMoved(int position);
+
+    private:
 
     bool m_IsSimulatePhysics;
     bool m_IsTracking;

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/fonts/Licenses.pdf</file>
+        <file>resources/fonts/NewWishes.otf</file>
+        <file>resources/fonts/NewWishes.ttf</file>
+        <file>resources/fonts/New-wishes-Script-thumbnails-01.jpg</file>
+        <file>resources/fonts/OFL.txt</file>
+        <file>resources/fonts/ZenDots-Regular.ttf</file>
+    </qresource>
+</RCC>

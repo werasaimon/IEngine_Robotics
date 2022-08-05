@@ -228,16 +228,15 @@ template<typename T>  bool IIsZero( T a, T epsilon = MACHINE_EPSILON )
     return (IAbs(a) <= epsilon);
 }
 
-
 template<typename T> SIMD_INLINE T IDegreesToRadians(T  Degrees)
 {
     return Degrees * (M_PI / 180.0f);
 }
+
 template<typename T> SIMD_INLINE T IRadiansToDegrees(T  Radians)
 {
     return Radians * (180.0f / M_PI);
 }
-
 
 template<typename T> SIMD_INLINE T ISin(T  Radians)
 {
