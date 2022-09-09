@@ -84,6 +84,12 @@ class ICollisionShape
     public:
 
 
+
+        Vector3 GetLocalSupportPoint(const Vector3& direction) const
+        {
+            return GetLocalSupportPointWithMargin(direction);
+        }
+
 //        virtual ICollisionShape *Clone(){ return nullptr; }
 
 

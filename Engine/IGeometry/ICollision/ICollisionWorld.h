@@ -83,6 +83,8 @@ class ICollisionWorld
         /// Ray cast method
         void raycast(const IRay& ray, IRaycastCallback* raycastCallback , unsigned short raycastWithCategoryMaskBits = 0xFFFF) const;
 
+        void raycast2(unsigned int raycastWithCategoryMaskBits) const;
+
         /// Contact manager
         IContactManager *GetCollisionDetection();
 

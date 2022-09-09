@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle("IEngine - Werasaimon");
+    setWindowTitle("IEngine - Werasaimon : 777");
 
     timer = new QTimer(this);
     m_socket = new QUdpSocket(this);
@@ -586,6 +586,7 @@ void MainWindow::on_actionopen_tracking_triggered()
         QString line = in.readLine();
 
 
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->num = 0;
         bool isInit = true; Vector3 P;
         auto &V_array = static_cast<SceneEngineRobocar*>(ui->widget->scene())->mTrackerPoints;
         while(!in.atEnd())
@@ -610,9 +611,9 @@ void MainWindow::on_actionopen_tracking_triggered()
         }
 
         static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_EndPoint = P;
-        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_pickPoint =
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_pickPoint;
         //static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_PointS =
-        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_EndPoint + Vector3::Y * 3;
+        //static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_EndPoint + Vector3::Y * 3;
 
 
         static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_PointS =
@@ -644,5 +645,8 @@ void MainWindow::on_horizontalSlider_MaxLength_sliderMoved(int position)
 }
 
 
-
+void MainWindow::on_horizontalSlider_MAX_DISTANCE_LIDAR_sliderMoved(int position)
+{
+    static_cast<SceneEngineRobocar*>(ui->widget->scene())->MaxDistanceLIDAR = position;
+}
 

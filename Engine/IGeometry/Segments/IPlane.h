@@ -77,7 +77,7 @@ public:
     }
 
     // Set this plane from a normal and a point on the plane.
-    IPlane(const Vector3& _normal, const Vector3& _point)
+    IPlane(const Vector3& _normal, const Vector3& _point = Vector3::ZERO)
     {
         mNormal = _normal;
         mOffset = _normal.Dot(_point);

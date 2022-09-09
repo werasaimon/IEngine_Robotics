@@ -159,4 +159,11 @@ void ICollisionWorld::raycast(const IRay& ray, IRaycastCallback* raycastCallback
 }
 
 
+void ICollisionWorld::raycast2( unsigned int raycastWithCategoryMaskBits) const
+{
+    std::cout << "real mask : " << raycastWithCategoryMaskBits << std::endl;
+   // mCollisionDetection.Raycast(raycastCallback, ray , raycastWithCategoryMaskBits);
+}
+
+
 }

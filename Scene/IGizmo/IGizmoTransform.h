@@ -193,7 +193,7 @@ public:
         IVector3   WorldScreen =  screen_space * (mProjMatrix * mViewMatrix).GetInverse();
 
         // Ray-world
-        rayOrigin = mViewMatrix.GetInverse().GetTranslation();;
+        rayOrigin = mViewMatrix.GetInverse().GetTranslation();
         rayDir    = (WorldScreen - rayOrigin).Normalized();
 
 

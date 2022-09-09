@@ -131,7 +131,9 @@ public:
         //***************************************************************//
 
         bool FindPointsToContacts(const Vector3* SupportVertA, i32 iNumVertsA,
-                                  const Vector3* SupportVertB, i32 iNumVertsB , const IOutputCollisionInfo& info_collision, const Vector3 &_Normal ,
+                                  const Vector3* SupportVertB, i32 iNumVertsB ,
+                                  const IOutputCollisionInfo& info_collision,
+                                  const Vector3 &_Normal ,
                                   const ICollisionShapeInfo &shape1Info,
                                   const ICollisionShapeInfo &shape2Info);
 

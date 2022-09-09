@@ -3,8 +3,8 @@
 
 #include "SceneMain.h"
 
-#include "Scene/Sensors/OrientationSensor.h"
-#include "Scene/Sensors/EncoderSensor.h"
+#include "Scene/Sensors/ISensorOrientation.h"
+#include "Scene/Sensors/ISensorEncoder.h"
 #include "Engine/engine.hpp"
 
 #include "Engine/ICommon/IMemory/IList.h"
@@ -38,13 +38,18 @@
 #include "EngineComponent/IEngineComponent.hpp"
 #include "Shader/Shader.h"
 
-#include "Sensors/EncoderSensor.h"
-#include "Sensors/OrientationSensor.h"
-#include "Sensors/VehicleRobotCar.h"
+#include "Sensors/ISensorOrientation.h"
+#include "Sensors/ISensorEncoder.h"
+#include "Sensors/ISensorLIDAR.h"
+#include "Robotics/VehicleRobotCar.h"
 
 #include "IEngineGimbalStabilization.h"
-
 #include "IEngineFactory.h"
+
+#include "../fontprovider.h"
+#include "../Engine/IAlgorithm/IGrahamScan2dConvexHull.h"
+
+
 
 using namespace IMath;
 using namespace IEngine;
@@ -53,6 +58,198 @@ using namespace IEngine;
 
 class SceneEngineRobocar;
 class FactoryMethod;
+
+
+
+class IRaycastInfoOutput : public IRaycastCallback
+{
+    private:
+
+
+       // -------------------- Attributes -------------------- //
+
+       ///! is bind caculate LASER
+       bool  mIsBind;
+
+       unsigned short mBitMask;
+
+       ///! Fraction distance of the hit point between point1 and point2 of the ray
+       ///! The hit point "p" is such that p = point1 + hitFraction * (point2 - point1)
+       scalar mDistance;
+
+       ///! Maximun distance to object
+       scalar mMaximumDistance;
+
+       ///! Raycast distance to object
+       IRaycastInfo mRaycastInfo;
+
+    public:
+
+        //-------------------- Methods --------------------//
+
+        IRaycastInfoOutput(unsigned short BitMask = 0x0001) :
+         mIsBind(true),
+         mBitMask(BitMask),
+         mDistance(1),
+         mMaximumDistance(1)
+        {
+
+        }
+
+        ~IRaycastInfoOutput()
+        {
+
+        }
+
+        void Bind(const scalar& _maximunm_distance)
+        {
+            mIsBind = true;
+            mDistance = _maximunm_distance;
+            mMaximumDistance = _maximunm_distance;
+        }
+
+        /// This method will be called for each ProxyShape that is hit by the
+        /// ray. You cannot make any assumptions about the order of the
+        /// calls. You should use the return value to control the continuation
+        /// of the ray. The returned value is the next maxFraction value to use.
+        /// If you return a fraction of 0.0, it means that the raycast should
+        /// terminate. If you return a fraction of 1.0, it indicates that the
+        /// ray is not clipped and the ray cast should continue as if no hit
+        /// occurred. If you return the fraction in the parameter (hitFraction
+        /// value in the IRaycastInfo object), the current ray will be clipped
+        /// to this fraction in the next queries. If you return -1.0, it will
+        /// ignore this ProxyShape and continue the ray cast.
+        /**
+         * @param IRaycastInfo Information about the raycast hit
+         * @return Value that controls the continuation of the ray after a hit
+         */
+        scalar notifyRaycastHit(const IRaycastInfo& IRaycastInfo)
+        {
+            if(IRaycastInfo.proxyShape->GetCollisionCategoryBits() == mBitMask)
+            {
+                /// Minimal distance [sorting]
+                if(mDistance > IRaycastInfo.hitFraction || mIsBind)
+                {
+                    mDistance = (IRaycastInfo.hitFraction <= mMaximumDistance) ? IRaycastInfo.hitFraction : mMaximumDistance;
+                    mIsBind = false;
+                    mRaycastInfo.worldPoint = IRaycastInfo.worldPoint;
+                    mRaycastInfo.worldNormal = IRaycastInfo.worldNormal;
+                    mRaycastInfo.hitFraction = IRaycastInfo.hitFraction;
+                    mRaycastInfo.meshSubpart = IRaycastInfo.meshSubpart;
+                    mRaycastInfo.triangleIndex = IRaycastInfo.triangleIndex;
+                    mRaycastInfo.body = IRaycastInfo.body;
+                    mRaycastInfo.proxyShape = IRaycastInfo.proxyShape;
+                }
+
+            }
+
+            return IRaycastInfo.hitFraction;
+        }
+
+        ///
+        /// \brief distance
+        /// \return Minimal distance Lidar
+        ///
+        float getDistance() const
+        {
+            return mDistance;
+        }
+
+        const IRaycastInfo &raycastInfo() const
+        {
+            return mRaycastInfo;
+        }
+
+        bool isBind() const
+        {
+            return mIsBind;
+        }
+};
+
+
+//-----------------------------------------//
+
+
+class CallbeckSupprtModelee : public CallbeckSupprtModel
+{
+
+        std::vector<Vector3> mPoints;
+
+    public:
+
+        CallbeckSupprtModelee(std::vector<Vector3> _points)
+        : mPoints(_points)
+        {
+        }
+
+        Vector3 SupportPoint(const Vector3& AxisDirection) const override
+        {
+            unsigned int index = 0;
+            scalar max = (mPoints[0].Dot(AxisDirection));
+            for (unsigned int i = 1; i < mPoints.size(); i++)
+            {
+                scalar d = (mPoints[i].Dot(AxisDirection));
+                if (d > max)
+                {
+                    max = d;
+                    index = i;
+                }
+            }
+            return mPoints[index];
+        }
+
+        virtual const Matrix4 GetTransform() const override
+        {
+            return Matrix4::IDENTITY;
+        }
+};
+
+
+
+class CallbeckSupprtCollide : public CallbeckSupprtModel
+{
+
+       IProxyShape *mProxyShape;
+
+       Vector3 a,b;
+
+    public:
+
+        CallbeckSupprtCollide( IProxyShape *_ProxyShape , const Vector3& _a , const Vector3& _b)
+            :  mProxyShape(_ProxyShape), a(_a), b(_b)
+        {
+        }
+
+        Vector3 SupportPoint2(const Vector3& direction) const
+        {
+            auto q = mProxyShape->GetWorldTransform().GetBasis();
+            return mProxyShape->GetWorldTransform() *
+                   (mProxyShape->GetCollisionShape()->GetLocalSupportPoint(q.GetTranspose() * direction) * 1.0);
+        }
+
+        Vector3 SupportPoint(const Vector3& direction) const override
+        {
+            Vector3 sp[] = { a , b , SupportPoint2(direction)};
+            int index = 0;
+            float max = sp[index].Dot(direction);
+            for (int i = 1; i < 3; ++i)
+            {
+                float d = sp[i].Dot(direction);
+                if(d > max)
+                {
+                    max = d;
+                    index = i;
+                }
+            }
+            return sp[index];
+        }
+
+
+        virtual const Matrix4 GetTransform() const override
+        {
+            return mProxyShape->GetWorldTransform().GetTransformMatrix();
+        }
+};
 
 //-----------------------------------------//
 
@@ -82,8 +279,8 @@ struct DataPacketRemote
 };
 
 
-//-----------------------------------------//
 
+//----------------------------------------//
 
 struct SceneDscriptorr
 {
@@ -160,6 +357,9 @@ class SceneEngineRobocar : public SceneMain
 
     //----------------------------//
 
+    int numer_end=0;
+    int nummm = 0;
+
     //---------------- Manipulator -------------------//
     std::auto_ptr<IGizmoManipulator> mGizmoManipulator;
     std::set<int>                    mSelectedIndexIds;
@@ -170,9 +370,59 @@ class SceneEngineRobocar : public SceneMain
 
     IEngineFactoryRobot *mFactoryMethod;
 
+    //---------------------------//
+
+    scalar mAngleEyeLidar;
+    IComponentMesh *mBoxLidar;
+
+
+    struct PointLIDAR
+    {
+       PointLIDAR(float _distance , float _angle , Vector3 _point) :
+           distance(_distance) ,
+           angle(_angle),
+           point(_point)
+       {}
+
+       float distance;
+       float angle;
+       Vector3 point;
+    };
+
+    std::vector<PointLIDAR> mLiDARPoints;
+
+
+    FontProvider mFontProvider;
+    QOpenGLShaderProgram mProgramFont;
 
     //---------------------------//
 
+    Vector3 m_TargetPoint;
+    IMesh *m_BoxMeshBottom;
+    std::vector<Vector3> hull;
+    std::vector<GrahamVector3> GrahamHull;
+
+    std::vector<Vector3> polygon;
+
+
+
+    static Vector3 SupprtPoint(const Vector3* vertices , unsigned int num_size ,
+                               const Transform& transform ,
+                               const Vector3& direction)
+    {
+        int index = 0;
+        scalar max = (vertices[index].Dot(direction));
+        for (unsigned int i = 1; i < num_size; i++)
+        {
+            scalar d = (vertices[i].Dot(direction));
+            if (d > max)
+            {
+                max = d;
+                index = i;
+            }
+        }
+        return vertices[index];
+    }
 
 public:
 
@@ -189,7 +439,7 @@ public:
     int num;
     Vector3 m_PointS;
     Vector3 m_EndPoint;
-    std::vector<Vector3> mPoints;
+   // std::vector<Vector3> mPoints;
     float speed_point = 1.0;
     float angle_yaw;
 
@@ -200,6 +450,11 @@ public:
 
 
     float Max_Length;
+    float MaxDistanceLIDAR = 50;
+    std::vector<Vector3> mClipPoints;
+    std::vector<Vector3> mClipPoints2;
+
+    bool isRevert = false;
 
 
 public:

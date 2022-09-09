@@ -236,10 +236,8 @@ scalar IBroadPhaseRaycastCallback::RaycastBroadPhaseShape(i32 nodeId, const IRay
         IProxyShape* proxyShape = static_cast<IProxyShape*>(mDynamicAABBTree.GetNodeDataPointer(nodeId));
 
         // Check if the raycast filtering mask allows raycast against this shape
-        //if ((mRaycastWithCategoryMaskBits != 0) || true  /*&& proxyShape->getCollisionCategoryBits()*/ )
         if ((mRaycastWithCategoryMaskBits & proxyShape->GetCollisionCategoryBits()) != 0)
         {
-
             // Ask the collision detection to perform a ray cast test against
             // the proxy shape of this node because the ray is overlapping
             // with the shape in the broad-phase

@@ -282,6 +282,7 @@ SIMD_INLINE bool IBroadPhase::TestOverlappingShapes(const T* shape1,
 // Ray casting method
 SIMD_INLINE void IBroadPhase::Raycast(const IRay &ray, IRaycastTest& raycastTest , unsigned short raycastWithCategoryMaskBits) const
 {
+
     IBroadPhaseRaycastCallback broadPhaseRaycastCallback(mDynamicAABBTree, raycastWithCategoryMaskBits, raycastTest);
     mDynamicAABBTree.Raycast( ray , broadPhaseRaycastCallback );
 }

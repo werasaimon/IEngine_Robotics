@@ -2,24 +2,25 @@
 #define IMATHS_HPP
 
 #include "IMath/IFunc.h"
+#include "IMath/IMatrix.h"
+#include "IMath/IOctonion.h"
+#include "IMath/IComplex.h"
+#include "IMath/ISpherical.h"
+#include "IMath/IVector.h"
+#include "IMath/IScalarType.h"
+#include "IMath/IAlgebra.h"
+
+
 #include "IMath/IVector2D.h"
 #include "IMath/IVector3D.h"
 #include "IMath/IVector4D.h"
 #include "IMath/ILorentzVector.h"
-#include "IMath/IMatrix.h"
 #include "IMath/IMatrix2x2.h"
 #include "IMath/IMatrix3x3.h"
 #include "IMath/IMatrix4x4.h"
 #include "IMath/IQuaternion.h"
-#include "IMath/IOctonion.h"
-#include "IMath/IComplex.h"
 #include "IMath/ITransform.h"
 #include "IMath/IAffineTransform.h"
-#include "IMath/ISpherical.h"
-
-#include "IMath/IVector.h"
-#include "IMath/IScalarType.h"
-#include "IMath/IAlgebra.h"
 
 
 

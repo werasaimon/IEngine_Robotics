@@ -28,13 +28,14 @@ public:
 
     }
 
-    IOutputCollisionInfo( const Vector3& _normal ,  const scalar&  _penetration ,
-                          const Vector3& _point1 ,
+    IOutputCollisionInfo( const Vector3& _normal,
+                          const scalar&  _penetration,
+                          const Vector3& _point1,
                           const Vector3& _point2 )
-      :Normal(_normal),
-       Penetration(_penetration),
-       Point1(_point1),
-       Point2(_point2)
+        :Penetration(_penetration),
+         Normal(_normal),
+         Point1(_point1),
+         Point2(_point2)
     {
 
     }

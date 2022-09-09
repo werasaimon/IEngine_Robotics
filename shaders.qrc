@@ -4,5 +4,9 @@
         <file>shaders/object.vsh</file>
         <file>shaders/depth.fsh</file>
         <file>shaders/depth.vsh</file>
+        <file>shaders/test.fsh</file>
+        <file>shaders/text.vsh</file>
+        <file>shaders/fshaderFont30.glsl</file>
+        <file>shaders/vshaderFont30.glsl</file>
     </qresource>
 </RCC>

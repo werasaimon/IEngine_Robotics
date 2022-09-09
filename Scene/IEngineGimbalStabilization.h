@@ -3,7 +3,7 @@
 
 
 
-#include "Sensors/OrientationSensor.h"
+#include "Sensors/ISensorOrientation.h"
 #include "Engine/engine.hpp"
 
 #include "IGizmoManipulator.h"

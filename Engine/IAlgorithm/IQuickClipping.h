@@ -192,48 +192,48 @@ class IQuickClipping
 
     class IClipPolygon
     {
-        const Vector3 *mVertices;
-        const int       mNbVertices;
+            const Vector3 *mVertices;
+            const int       mNbVertices;
 
-    public:
+        public:
 
-        IClipPolygon(const Vector3* _vertices , const int _count )
-            : mVertices(_vertices) ,
-              mNbVertices(_count)
-        {
+            IClipPolygon(const Vector3* _vertices , const int _count )
+                : mVertices(_vertices) ,
+                  mNbVertices(_count)
+            {
 
-        }
+            }
 
-        int GetCount() const
-        {
-            return mNbVertices;
-        }
+            int GetCount() const
+            {
+                return mNbVertices;
+            }
 
-        const Vector3* GetVertices() const
-        {
-            return mVertices;
-        }
+            const Vector3* GetVertices() const
+            {
+                return mVertices;
+            }
 
-        //        IClipEdge EdgeAtt( int &_index ) const
-        //        {
-        //            int index_a = (_index + 1);
-        //            int index_b = _index;
+            //        IClipEdge EdgeAtt( int &_index ) const
+            //        {
+            //            int index_a = (_index + 1);
+            //            int index_b = _index;
 
-        //            if(_index == (mNbVertices-1))
-        //            {
-        //                index_a = 0;
-        //                index_b = (mNbVertices-1);
-        //            }
-
-
-        //            return IClipEdge(mVertices[index_a],
-        //                             mVertices[index_b]);
-        //        }
+            //            if(_index == (mNbVertices-1))
+            //            {
+            //                index_a = 0;
+            //                index_b = (mNbVertices-1);
+            //            }
 
 
+            //            return IClipEdge(mVertices[index_a],
+            //                             mVertices[index_b]);
+            //        }
 
-        IClipEdge EdgeAt( int &_i ) const
-        {
+
+
+            IClipEdge EdgeAt( int &_i ) const
+            {
                 int index_a;
                 int index_b;
 
@@ -255,11 +255,11 @@ class IQuickClipping
                     index_a = mNbVertices - 1;
                 }
 
-               // std::cout << "index " << _i << "     index_a: " << index_a << "   index_b: " << index_b << std::endl;
+                // std::cout << "index " << _i << "     index_a: " << index_a << "   index_b: " << index_b << std::endl;
 
                 return IClipEdge(mVertices[index_a],
                                  mVertices[index_b]);
-        }
+            }
 
     };
 

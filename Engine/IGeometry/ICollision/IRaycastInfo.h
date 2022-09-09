@@ -121,7 +121,6 @@ class IRaycastCallback
 /// Structure RaycastTest
 struct IRaycastTest
 {
-
     public:
 
         /// User callback class

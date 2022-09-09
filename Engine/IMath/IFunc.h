@@ -228,16 +228,15 @@ template<typename T>  bool IIsZero( T a, T epsilon = MACHINE_EPSILON )
     return (IAbs(a) <= epsilon);
 }
 
-
 template<typename T> SIMD_INLINE T IDegreesToRadians(T  Degrees)
 {
     return Degrees * (M_PI / 180.0f);
 }
+
 template<typename T> SIMD_INLINE T IRadiansToDegrees(T  Radians)
 {
     return Radians * (180.0f / M_PI);
 }
-
 
 template<typename T> SIMD_INLINE T ISin(T  Radians)
 {
@@ -302,6 +301,25 @@ template<typename T> SIMD_INLINE T IAtan2(T  X , T  Y)
     return  atan2(X , Y);
 }
 
+template<typename T> SIMD_INLINE T IAtan2Fast(T y, T x)
+{
+    T coeff_1 = M_PI / 4.0f;
+    T coeff_2 = 3.0f * coeff_1;
+    T abs_y = IAbs(y);
+    T angle;
+    if (x >= T(0.0f))
+    {
+        T r = (x - abs_y) / (x + abs_y);
+        angle = coeff_1 - coeff_1 * r;
+    }
+    else
+    {
+        T r = (x + abs_y) / (abs_y - x);
+        angle = coeff_2 - coeff_1 * r;
+    }
+    return (y < T(0.0f)) ? -angle : angle;
+}
+
 template<typename T> SIMD_INLINE T ILog(T  X)
 {
     return  log(X);
@@ -327,6 +345,22 @@ template<typename T> SIMD_INLINE T ISqrt(T  In)
 {
     return sqrt(In);
 }
+
+    template<typename T> SIMD_INLINE T ISqrtFast(T  y)
+    {
+        T x, z, tempf;
+        unsigned long *tfptr = ((unsigned long *)&tempf) + 1;
+        tempf = y;
+        *tfptr = (0xbfcdd90a - *tfptr) >> 1; /* estimate of 1/sqrt(y) */
+        x = tempf;
+        z = y * T(0.5);
+        x = (T(1.5) * x) - (x * x) * (x * z); /* iteration formula     */
+        x = (T(1.5) * x) - (x * x) * (x * z);
+        x = (T(1.5) * x) - (x * x) * (x * z);
+        x = (T(1.5) * x) - (x * x) * (x * z);
+        x = (T(1.5) * x) - (x * x) * (x * z);
+        return x * y;
+    }
 
 template<typename T> SIMD_INLINE T IRand(T  r = 1.0f)
 {

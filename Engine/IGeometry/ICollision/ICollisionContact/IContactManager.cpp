@@ -530,6 +530,7 @@ void IContactManager::Raycast(IRaycastCallback *raycastCallback, const IRay &ray
 {
     IRaycastTest rayCastTest(raycastCallback);
 
+
     // Ask the broad-phase algorithm to call the testRaycastAgainstShape()
     // callback method for each proxy shape hit by the ray in the broad-phase
     mBroadPhaseAlgorithm.Raycast(ray, rayCastTest, raycastWithCategoryMaskBits);

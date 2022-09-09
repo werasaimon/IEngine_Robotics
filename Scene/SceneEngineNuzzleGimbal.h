@@ -3,7 +3,7 @@
 
 #include "SceneMain.h"
 
-#include "Scene/Sensors/OrientationSensor.h"
+#include "Scene/Sensors/ISensorOrientation.h"
 #include "Engine/engine.hpp"
 
 #include "Engine/ICommon/IMemory/IList.h"
