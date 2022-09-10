@@ -73,8 +73,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Engine/IAlgorithm/GJK-EPA/IGjkEpa.cpp \
     Engine/IAlgorithm/IClliping.cpp \
-    Engine/IAlgorithm/IGrahamScan2dConvexHull.cpp \
     Engine/IAlgorithm/IQuickClipping.cpp \
+    Engine/IAlgorithm/IScanColsingPath.cpp \
     Engine/IAlgorithm/QuickHull/QuickHull.cpp \
     Engine/IAlgorithm/iclliping3d.cpp \
     Engine/ICommon/IColor.cpp \
@@ -183,9 +183,9 @@ SOURCES += \
 HEADERS += \
     Engine/IAlgorithm/GJK-EPA/IGjkEpa.h \
     Engine/IAlgorithm/IClliping.h \
-    Engine/IAlgorithm/IGrahamScan2dConvexHull.h \
     Engine/IAlgorithm/IQuickClipping.h \
     Engine/IAlgorithm/IQuickHull.hpp \
+    Engine/IAlgorithm/IScanColsingPath.h \
     Engine/IAlgorithm/QuickHull/ConvexHull.hpp \
     Engine/IAlgorithm/QuickHull/HalfEdgeMesh.hpp \
     Engine/IAlgorithm/QuickHull/MathUtils.hpp \

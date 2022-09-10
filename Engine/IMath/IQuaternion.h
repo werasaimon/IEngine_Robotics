@@ -477,7 +477,7 @@ namespace IMath
 //            rpy[1] *= 180.0f / M_PI;
 //            rpy[2] *= 180.0f / M_PI;
 
-            return IVector3D<T>( rpy[0], rpy[2], rpy[1] );
+            return IVector3D<T>( rpy[0], rpy[1], rpy[2] );
         }
 
 

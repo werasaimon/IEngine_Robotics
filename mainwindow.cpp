@@ -338,14 +338,14 @@ void MainWindow::on_pushButton_LQR_clicked()
 
     if((m_IsTracking) && !m_IsConnectUDP)
     {
-       m_IsTracking = false;
+       static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTracking = m_IsTracking = false;
        ui->pushButton_LQR->setText("Tracking - ON");
        //ui->checkBox_TrackerMove->setCheckable(false);
        //static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTrackingMove = false;
     }
     else
     {
-       m_IsTracking = true;
+       static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsTracking = m_IsTracking = true;
        ui->pushButton_LQR->setText("Tracking - OFF");
     }
     static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsDynamic_LQR = !m_IsTracking;
@@ -437,7 +437,7 @@ void MainWindow::on_pushButton_StartUDP_clicked()
 
         if(result)
         {
-            m_IsConnectUDP = true;
+            static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsConnectUDP = m_IsConnectUDP = true;
             qDebug() << "CONNECT";
             ui->pushButton_StartUDP->setText( m_socket->localAddress().toString() + " :" + QString::number(m_socket->localPort()));
 
@@ -461,7 +461,7 @@ void MainWindow::on_pushButton_StartUDP_clicked()
     {
         ui->pushButton_StartUDP->setText("Start_UDP");
         m_socket->close();
-        m_IsConnectUDP = false;
+        static_cast<SceneEngineRobocar*>(ui->widget->scene())->m_IsConnectUDP = m_IsConnectUDP = false;
     }
 }
 
@@ -641,12 +641,15 @@ void MainWindow::on_checkBox_TrackerMove_toggled(bool checked)
 
 void MainWindow::on_horizontalSlider_MaxLength_sliderMoved(int position)
 {
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->Max_Length = position;
+     static_cast<SceneEngineRobocar*>(ui->widget->scene())->mRoboCar->mDispatcherAttribute.extrem_MIN_MAX =
+     static_cast<SceneEngineRobocar*>(ui->widget->scene())->Max_MotorPower = position;
+
+    ui->spinBox_extrem_MIN_MAX->textChanged(QString::number(position));
 }
 
 
 void MainWindow::on_horizontalSlider_MAX_DISTANCE_LIDAR_sliderMoved(int position)
 {
-    static_cast<SceneEngineRobocar*>(ui->widget->scene())->MaxDistanceLIDAR = position;
+    //static_cast<SceneEngineRobocar*>(ui->widget->scene())->MaxDistanceLIDAR = position;
 }
 

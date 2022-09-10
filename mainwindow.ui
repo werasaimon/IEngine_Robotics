@@ -21,11 +21,23 @@
        <enum>Qt::Vertical</enum>
       </property>
       <widget class="QSplitter" name="splitter">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <widget class="GLWidget" name="widget" native="true"/>
        <widget class="QGroupBox" name="groupBox">
+        <property name="maximumSize">
+         <size>
+          <width>859</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="title">
          <string>Panel Attribute</string>
         </property>
@@ -80,6 +92,9 @@
            </item>
            <item>
             <widget class="QSlider" name="horizontalSlider_MAX_DISTANCE_LIDAR">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="minimum">
               <number>5</number>
              </property>
@@ -260,8 +275,11 @@
            </item>
            <item>
             <widget class="QSlider" name="horizontalSlider_MaxLength">
+             <property name="maximum">
+              <number>500</number>
+             </property>
              <property name="value">
-              <number>25</number>
+              <number>100</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>

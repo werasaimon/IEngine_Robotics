@@ -47,7 +47,7 @@
 #include "IEngineFactory.h"
 
 #include "../fontprovider.h"
-#include "../Engine/IAlgorithm/IGrahamScan2dConvexHull.h"
+#include "../Engine/IAlgorithm/IScanColsingPath.h"
 
 
 
@@ -357,8 +357,7 @@ class SceneEngineRobocar : public SceneMain
 
     //----------------------------//
 
-    int numer_end=0;
-    int nummm = 0;
+    int numer_end;
 
     //---------------- Manipulator -------------------//
     std::auto_ptr<IGizmoManipulator> mGizmoManipulator;
@@ -372,24 +371,24 @@ class SceneEngineRobocar : public SceneMain
 
     //---------------------------//
 
-    scalar mAngleEyeLidar;
-    IComponentMesh *mBoxLidar;
+//    scalar mAngleEyeLidar;
+//    IComponentMesh *mBoxLidar;
 
 
-    struct PointLIDAR
-    {
-       PointLIDAR(float _distance , float _angle , Vector3 _point) :
-           distance(_distance) ,
-           angle(_angle),
-           point(_point)
-       {}
+//    struct PointLIDAR
+//    {
+//       PointLIDAR(float _distance , float _angle , Vector3 _point) :
+//           distance(_distance) ,
+//           angle(_angle),
+//           point(_point)
+//       {}
 
-       float distance;
-       float angle;
-       Vector3 point;
-    };
+//       float distance;
+//       float angle;
+//       Vector3 point;
+//    };
 
-    std::vector<PointLIDAR> mLiDARPoints;
+//    std::vector<PointLIDAR> mLiDARPoints;
 
 
     FontProvider mFontProvider;
@@ -400,29 +399,11 @@ class SceneEngineRobocar : public SceneMain
     Vector3 m_TargetPoint;
     IMesh *m_BoxMeshBottom;
     std::vector<Vector3> hull;
-    std::vector<GrahamVector3> GrahamHull;
-
     std::vector<Vector3> polygon;
 
 
 
-    static Vector3 SupprtPoint(const Vector3* vertices , unsigned int num_size ,
-                               const Transform& transform ,
-                               const Vector3& direction)
-    {
-        int index = 0;
-        scalar max = (vertices[index].Dot(direction));
-        for (unsigned int i = 1; i < num_size; i++)
-        {
-            scalar d = (vertices[i].Dot(direction));
-            if (d > max)
-            {
-                max = d;
-                index = i;
-            }
-        }
-        return vertices[index];
-    }
+
 
 public:
 
@@ -439,9 +420,11 @@ public:
     int num;
     Vector3 m_PointS;
     Vector3 m_EndPoint;
-   // std::vector<Vector3> mPoints;
+
     float speed_point = 1.0;
     float angle_yaw;
+
+    float Max_MotorPower;
 
 
     bool m_IsTrackingMove;
@@ -449,13 +432,16 @@ public:
     Vector3 m_pickPoint;
 
 
-    float Max_Length;
-    float MaxDistanceLIDAR = 50;
-    std::vector<Vector3> mClipPoints;
-    std::vector<Vector3> mClipPoints2;
+//    float Max_Length;
+//    float MaxDistanceLIDAR = 50;
+//    std::vector<Vector3> mClipPoints;
+//    std::vector<Vector3> mClipPoints2;
 
     bool isRevert = false;
 
+    bool m_IsConnectUDP;
+    bool m_IsTracking;
+    bool m_isHelp;
 
 public:
     SceneEngineRobocar();
